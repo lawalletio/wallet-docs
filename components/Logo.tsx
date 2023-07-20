@@ -1,8 +1,13 @@
+import { useState, useEffect } from "react";
 import { useTheme } from "nextra-theme-docs";
-import Image from "next/image";
 
 export const Logo = () => {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    setTheme(resolvedTheme);
+  }, [resolvedTheme]);
 
   return (
     <svg
@@ -10,7 +15,7 @@ export const Logo = () => {
       viewBox='0 0 255.18 56.53'
       width={180}
       height={80}
-      fill={theme === "dark" ? "#fff" : "#000"}
+      fill={theme === "light" ? "#000" : "#fff"}
     >
       <path d='M11.11,47.57V42.28H45.45v-3.8H18.69V33.19H45.45V29.38H25.25V24.1h20.2V24c0-12.55-10.17-24-22.72-24h0C10.18,0,0,11.48,0,24V52.31H45.45V47.57Z' />
       <rect x='71.19' y='16.56' width='4.66' height='30.78' />
