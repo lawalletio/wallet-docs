@@ -1,8 +1,9 @@
 import React from "react";
-import { DocsThemeConfig } from "nextra-theme-docs";
+import { DocsThemeConfig, useConfig } from "nextra-theme-docs";
+import Logo from "./components/Logo";
 
 const config: DocsThemeConfig = {
-  logo: <span>La Crypta Wallet</span>,
+  logo: <Logo />,
   chat: {
     link: "https://discord.lacrypta.ar",
   },
