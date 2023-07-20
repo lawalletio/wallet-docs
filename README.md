@@ -1,10 +1,6 @@
-# Nextra Docs Template
+# La Crypta Wallet Documentation
 
 This is a template for creating documentation with [Nextra](https://nextra.site).
-
-[**Live Demo &#x2192;**](https://nextra-docs-template.vercel.app)
-
-[![Example Screenshot](assets/screenshot.png)](https://nextra-docs-template.vercel.app)
 
 ## Quick Start
 
