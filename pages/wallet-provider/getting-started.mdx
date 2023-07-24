@@ -1,3 +1,49 @@
-# HODL.ar Getting Started
+# Getting Started
 
-Getting started
+You can simply run docker compose on your server
+
+## Docker-compose file
+
+docker-compose.yml
+
+```yaml
+version: "3.8"
+services:
+  app:
+    build:
+      context: ./
+      target: runner
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: pnpm dev
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./.env
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: "postgresql://root:root@postgres/wallet_provider"
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    restart: always
+    environment:
+      - DATABASE_HOST=localhost
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=wallet_provider
+    ports:
+      - 5432:5432
+
+  lnd-gateway:
+    container_name: postgres
+    image: masize/lnd-gateway
+    restart: always
+    environment:
+      - APP_PORT=3000
+      # - LND Data
+```
