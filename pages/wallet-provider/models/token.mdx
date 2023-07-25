@@ -1,11 +1,11 @@
-# User
+# Token
 
-Stores User Data
+Stores Token list
 
 ## Schema
 
 - `id` : ID
-- `pubkey` : String
+- `name` : String
 
 ## Relations
 
@@ -15,13 +15,11 @@ Stores User Data
 ## Prisma definition
 
 ```prisma
-model User {
-  id     String @id @default(uuid())
-  pubkey String
+model Token {
+  id   String @id @default(uuid())
+  name String
 
-  balances        Balance[]
+  balances       Balance[]
   balanceSnapshots BalanceSnapshot[]
-
-  @@id([pubkey])
 }
 ```

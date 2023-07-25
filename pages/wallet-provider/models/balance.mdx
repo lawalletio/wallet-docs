@@ -1,0 +1,32 @@
+# Balance
+
+Stores User current balance token balance for a user
+
+## Schema
+
+- `userId` : ID ([User](./user))
+- `tokenId` : ID ([Token](./token))
+- `currentSnapshotId` : ID ([BalanceSnapshot](./balanceSnapshot))
+
+## Relations
+
+- [User](./user) - MANY
+- [Token](./token) - MANY
+- [BalanceSnapshot](./balanceSnapshot) - ONE
+
+## Prisma definition
+
+```prisma
+model Balance {
+  userId            String
+  tokenId           String
+  currentSnapshotId String
+
+  user     User     @relation(fields: [userId], references: [id])
+  token    Token    @relation(fields: [tokenId], references: [id])
+  snapshot BalanceSnapshot @relation(fields: [currentSnapshotId], references: [id])
+
+  @@id([userId, tokenId])
+  @@index([currentSnapshotId], name: "idx_balance_snapshot")
+}
+```
