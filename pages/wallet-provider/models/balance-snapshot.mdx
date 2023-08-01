@@ -1,0 +1,41 @@
+# BalanceSnapshot
+
+Stores User token balance history
+
+## Schema
+
+- `id` : UUID
+- `account` : ([Account](./account))
+- `tokenId`: ID ([Token](./token))
+- `prevSnapshot` : ([BalanceSnapshot](./balance-snapshot))
+- `nextSnapshot` : ([BalanceSnapshot](./balance-snapshot))
+- `movement` : ([Movement](./movement))
+- `amount` : Decimal
+- `delta`: Decimal
+
+## Relations
+
+- [Balance](./balance) - ONE
+- [Account](./Account) - ONE
+- [Token](./token) - ONE
+- [Movement](./movement) - ONE
+
+```prisma
+model BalanceSnapshot {
+  id             String           @map("id") @db.Uuid
+  prevSnapshotId String?          @map("prev_id") @db.Uuid
+  amount         Decimal          @map("amount")
+  movementId     String           @map("movement_id") @db.Uuid
+  delta          Decimal          @map("delta") // denormalized
+  tokenId        String           @map("token_id") @db.Uuid // denormalized
+  accountId      String           @map("account_id") @db.Uuid // denormalized
+  prevSnapshot   BalanceSnapshot? @relation("link", fields: [prevSnapshotId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  nextSnapshot   BalanceSnapshot? @relation("link")
+  balance        Balance          @relation("snapshot_to_balance", fields: [tokenId, accountId], references: [tokenId, accountId])
+  movement       Movement         @relation(fields: [movementId], references: [id])
+
+  @@id([id])
+  @@unique([prevSnapshotId])
+  @@map("snapshots")
+}
+```

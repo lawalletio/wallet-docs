@@ -1,10 +1,12 @@
-# Token
+> ⚠️ Missing pubkey
 
-Stores Token list
+# Account
+
+Stores User Data
 
 ## Schema
 
-- `id` : ID
+- `id` : UUID
 - `name` : String
 
 ## Relations
@@ -15,13 +17,13 @@ Stores Token list
 ## Prisma definition
 
 ```prisma
-model Token {
+model Account {
   id       String    @map("id") @db.Uuid
   name     String    @map("name")
   balances Balance[] @relation
 
   @@id([id])
   @@index([name])
-  @@map("tokens")
+  @@map("accounts")
 }
 ```

@@ -1,0 +1,29 @@
+# Movement
+
+Movement with inputs and outputs
+
+## Schema
+
+- `id` : ID
+- `movement-type` : ID ([MovementType](./movement-type))
+- `payload` : JSON
+
+## Relations
+
+- [MovementType](./movement-type) - ONE
+- [BalanceSnapshot](./balance-snapshot) - MANY
+
+## Prisma definition
+
+```prisma
+model Movement {
+  id             String            @map("id") @db.Uuid
+  movement-typeId String            @map("movement_type_id") @db.Uuid
+  payload        Json              @map("payload") @db.Json
+  movement-type   MovementType      @relation(fields: [movement-typeId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  snapshots      BalanceSnapshot[] @relation
+
+  @@id([id])
+  @@map("movements")
+}
+```

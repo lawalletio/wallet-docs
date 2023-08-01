@@ -4,29 +4,30 @@ Stores User current balance token balance for a user
 
 ## Schema
 
-- `userId` : ID ([User](./user))
-- `tokenId` : ID ([Token](./token))
-- `currentSnapshotId` : ID ([BalanceSnapshot](./balanceSnapshot))
+- `account` : ([Account](./account))
+- `token` : ([Token](./token))
+- `snapshot` : ([BalanceSnapshot](./balance-snapshot))
 
 ## Relations
 
-- [User](./user) - MANY
+- [Account](./account) - MANY
 - [Token](./token) - MANY
-- [BalanceSnapshot](./balanceSnapshot) - ONE
+- [BalanceSnapshot](./balance-snapshot) - ONE
 
 ## Prisma definition
 
 ```prisma
 model Balance {
-  userId            String
-  tokenId           String
-  currentSnapshotId String
+  accountId      String            @map("account_id") @db.Uuid
+  tokenId        String            @map("token_id") @db.Uuid
+  snapshotId     String            @map("snapshot_id") @db.Uuid
+  account        Account           @relation(fields: [accountId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  token          Token             @relation(fields: [tokenId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  snapshot       BalanceSnapshot   @relation("balance_to_snapshot", fields: [snapshotId], references: [id])
+  dummy_snapshot BalanceSnapshot[] @relation("snapshot_to_balance") @ignore
 
-  user     User     @relation(fields: [userId], references: [id])
-  token    Token    @relation(fields: [tokenId], references: [id])
-  snapshot BalanceSnapshot @relation(fields: [currentSnapshotId], references: [id])
-
-  @@id([userId, tokenId])
-  @@index([currentSnapshotId], name: "idx_balance_snapshot")
+  @@id([accountId, tokenId])
+  @@unique([snapshotId])
+  @@map("balances")
 }
 ```
