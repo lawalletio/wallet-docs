@@ -5,7 +5,7 @@ Movement with inputs and outputs
 ## Schema
 
 - `id` : ID
-- `movement-type` : ID ([MovementType](./movement-type))
+- `movementType` : ([MovementType](./movement-type))
 - `payload` : JSON
 
 ## Relations
@@ -18,9 +18,9 @@ Movement with inputs and outputs
 ```prisma
 model Movement {
   id             String            @map("id") @db.Uuid
-  movement-typeId String            @map("movement_type_id") @db.Uuid
+  movementTypeId String            @map("movement_type_id") @db.Uuid
   payload        Json              @map("payload") @db.Json
-  movement-type   MovementType      @relation(fields: [movement-typeId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  movementType   MovementType      @relation(fields: [movement-typeId], references: [id], onUpdate: NoAction, onDelete: NoAction)
   snapshots      BalanceSnapshot[] @relation
 
   @@id([id])
