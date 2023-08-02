@@ -1,0 +1,125 @@
+# Create Account
+
+Creates an Account and assigns a pubkey.
+**Required**: Authorized pubkey must sign the request.
+
+---
+
+## Request
+
+> **POST** /api/accounts/create
+
+### Parameters
+
+username
+: `String`
+The username of the account to create
+
+pubkey
+: `String`
+User public key
+
+### Format
+
+The **body** should be wrapped in a NOSTR event, included in the `content`
+
+```json highlight=7-8
+{
+  "id": "eventHash",
+  "pubkey": "AUTHORIZED_PUB_KEY",
+  "created_at": 1673347337,
+  "kind": 1, // TODO: define kind
+  "content": {
+    "username": "string",
+    "pubkey": "string"
+  },
+  "tags": [],
+  "sig": "signature of AUTHORIZED_PUB_KEY"
+}
+```
+
+---
+
+## Response
+
+### 200
+
+Valid Response
+
+```json
+{
+  "success": true,
+  "id": "Account UUID"
+}
+```
+
+### 400
+
+Malformed request
+
+```json
+{
+  "success": false,
+  "reason": "Should send as NOSTR event"
+}
+```
+
+### 403
+
+Forbidden operation
+
+```json
+{
+  "success": false,
+  "reason": "Pubkey not authorized"
+}
+```
+
+### 405
+
+Method Not Allowed
+
+```json
+{
+  "success": false,
+  "reason": "Must use POST method"
+}
+```
+
+### 409
+
+Conflict
+
+```json
+{
+  "success": false,
+  "reason": "Username already taken"
+}
+```
+
+```json
+{
+  "success": false,
+  "reason": "Pubkey already assigned to an existing account"
+}
+```
+
+---
+
+## Procedure
+
+### 1. Validate Request
+
+- Validate POST method
+- Validate nostr event (valid signature)
+- Validate AUTHORIZED_PUB_KEY pubkey
+
+### 2. Validate User Availability
+
+- Check if username is taken
+- Check if pubkey is taken
+
+### 3. Store
+
+- Insert new record [Account](/wallet-provider/core/models/account)
+- Make a register request on [HODL.ar](/hodl/) for new nostr username
