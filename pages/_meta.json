@@ -3,8 +3,8 @@
     "title": "Home",
     "type": "page"
   },
-  "hodl": {
-    "title": "Hodl",
+  "identity-provider": {
+    "title": "Identity Provider",
     "type": "page"
   },
   "wallet-provider": {
