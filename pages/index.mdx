@@ -35,18 +35,27 @@ The internal components are:
 - **Modules:** these are the interconnected pieces doing the actual work.
     Examples of actual internal modules are: Ledger Module, EVM-Gateway Module, NFC Card Module, etc.
 
-The different arrows represent different _modes_ of interaction with the backend as a whole:
+The arrows represent different API accesses to the Wallet Provider System.
+These can be categorized thusly:
 
-- **Generic REST Endpoints (A):** these constitute generic endpoints, realized as REST API requests.
-    These are expected to conform to the established generic REST API guidelines imposed by the API Gateway (ie. authentication, rate-limiting, routing, etc.).
-- **_Ad-Hoc_ REST Endpoints (B):** these constitute purpose-specific endpoints, that may or may not be realized as REST APIs (think `lnurl`-like endpoints that may expose a specification-defined behavior).
-    These are _a-priori_ exempt from following the guidelines alluded to above, since the flows therein are not necessarily aligned with them; _however_, implementations are free to impose a separate, sensible, set of guidelines for these as well, so as to prevent deleterious behavior (eg. flooding, DoS, etc.).
-- **Asynchronous NOSTR Messaging (C):** a generic endpoint exposed by the API Gateway simply serves as a way to publish a NOSTR event to the Local NOSTR Relay; this way, the external world is able to access the same _asynchronous_ interface the internal modules use themselves.
-- **Synchronous NOSTR Messaging (D):** these are made available in order to expose a _synchronous_ NOSTR API to the outside works; the idea here is that certain user-flows require very low latency and are best served with dedicated endpoints, alas, we do not want to expose a potentially incompatible REST API in order to deal with these, thus, we expose an endpoint that will accept a NOSTR event and route it appropriately, with the understanding that said event will be eventually published to the Local NOSTR Relay (cf. dotted line in the diagram).
-- **Internal NOSTR Messaging (E):** this is the main inter-module communication mechanism.
-    Modules are expected to talk to other modules using NOSTR events.
-    When doing so _asynchronously_, through the Local NOSTR Relay, modules are expected to establish a `REQ` subscription (cf. dashed lines in the diagram); when doing so _synchronously_, via Synchronous NOSTR Messaging, modules can expect the response (if any) to be delivered in the HTTP response body.
-- **External NOSTR Subscription (F):** external clients are expected to establish a `REQ` subscription to the Local NOSTR Relay in order to update user status.
+- **HTTP APIs:** these are accessed via HTTP, and can be further categorized into:
+  - **Ad-Hoc APIs:** an HTTP API hosted and routed directly towards an Internal Module, not necessarily REST-full itself; these APIs are provided for in order to allow for pre-existing use-case-specific behavior.
+  - **Generic REST APIs:** a REST API aimed at talking to the system as a whole, used mainly for configuration and API management itself.
+- **NOSTR APIs:** these are the main backbone of the Wallet Provider proper; they can be divided into "external" or "internal" ones:
+  - **External:** these APIs are not _restricted_ to being externally called (ie. they _can_ be used by Internal Modules to communicate with each other), but _are_ exposed to the outside world nonetheless.
+      The entities being transferred back and forth in these APIs are NOSTR events proper; sometimes this will be via a NOSTR-specific mechanism, sometimes it will be via HTTP, and this depends on the access pattern expected of it:
+    - **Synchronous Write API:** this is REST API implementing a _synchronous_ NOSTR API provided for low-latency scenarios.
+        This API will accept a `PUT` method with a NOSTR event as body, and (based off of the first `p` tag) route it to the corresponding Internal Module, waiting for a response, and sending it back to the client.
+    - **Asynchronous Write API:** this is a REST API implementing an _asynchronous_ NOSTR API provided for general use.
+        This API will accept a `PUT` method with a NOSTR event as body, and publish it to the Local NOSTR Relay, returning a `200` response to the client.
+    - **Asynchronous Read API:** this is simply a WebSocket connection to the Local NOSTR Relay, issued one or more `REQ` NOSTR commands.
+  - **Internal:** these APIs are realized via the Local NOSTR Relay proper, and consist more of a set of "protocols" than an API like the ones we're used to.
+    - **Asynchronous Read/Write API:** a normal `PUB` / `REQ` pair will serve as the "upstream" (ie. `PUB`) and "downstream" (ie. `REQ`) halves of the communication channel.
+
+The API Gateway component itself provides the implementation for:
+
+- **NOSTR Synchronous Write API:** via a `dispatch` endpoint, where a `PUT` method with a NOSTR event as body will be accepted, examined, and (based off of the first `p` tag therein) routed to the corresponding Internal Module, upon receiving a response it is forwarded to the requesting client as-is.
+- **NOSTR Asynchronous Write API:** via a `publish` endpoint, where a `PUT` method with a NOSTR event as body will be accepted, examined, and `PUB`'d to the Local NOSTR Relay.
 
 ### Local NOSTR Relay Architecture
 
@@ -65,13 +74,6 @@ where:
 - **Read NOSTR Replica:** these are clusters of NOSTR relays that serve as read-only replicas.
 - **C:** the externally-subscribed clients.
 
-The interactions shown are:
-
-- **NOSTR Event Publishing (A):** represents an event being published to the NOSTR subsystem.
-- **Inter-relay Replication Stream (B):** represents the "relay-to-relay" high-speed replication stream.
-- **Client Subscriptions (C):** represents the actual `REQ` subscriptions each external client established.
-- **Internal Module Subscriptions (D):** represents the actual `REQ` subscriptions each Internal Module established.
-
 Note how this keeps the load on the write-relay relatively low, requiring only as many `REQ` subscriptions as are established by the Internal Modules, and as many replication streams as there are read-only replicas.
 
 The image above shows a simple, single-level replication structure, one could just as easily cascade read-only replicas in a tree structure so as to keep outgoing channels to a minimum in each specific relay; we judge that to only complicate exposition in this case, but large-scale implementations may very well require this.
@@ -85,23 +87,19 @@ An Internal Module's generic architecture looks like this:
 Its constituent parts are:
 
 - **NOSTR _(optional)_ :** the main asynchronous NOSTR interface via which to publish and subscribe to the main NOSTR backbone.
-- **Synchronous Nostr _(optional)_ :** a synchronous REST API that accepts a NOSTR event and asynchronously acts upon it.
+- **Synchronous Nostr _(optional)_ :** a synchronous REST API that accepts a NOSTR event and synchronously acts upon it.
 - **Ad-Hoc REST API _(optional)_ :** a set of _ad-hoc_ REST API endpoints to support non-NOSTR-based flows.
 - **Internal NOSTR Relay _(optional)_ :** an optional part of the Internal Module's architecture, its purpose is to act as a sort of "local read-only replica", so as to reduce the pressure on the main Local NOSTR Relay whilst at the same time providing all the required `REQ` subscriptions to the module's Business Logic.
 - **Resources _(optional)_ :** an Internal Module is free to declare and use as many resources as it sees fit, they're their sole responsibility and the System Architecture at large knows not about them.
 - **Business Logic:** the Internal Module's business logic component realizes the module's purpose (it may contain an internal router, expose different sets of ports for different APIs, whatever the Internal Module's writer desires, so long as the API Gateway knows how to interact with it).
 
-### NOSTR Integration
+## HTTP API Endpoints
 
-> talk about NOSTR transparency integration
+The following endpoints are provided by default:
 
-### NOSTR API
-
-> talk about real-time NOSTR API for synchronous messaging
-
-### REST API
-
-> talk about ad-hoc REST APIs
+- **`PUT <base_url>/nostr/dispatch`:** synchronous NOSTR API.
+- **`PUT <base_url>/nostr/publish`:** asynchronous NOSTR API.
+- **`* <base_url>/*`:** ad-hoc HTTP API endpoints.
 
 ---
 
