@@ -93,32 +93,10 @@ Its constituent parts are:
 - **Resources _(optional)_ :** an Internal Module is free to declare and use as many resources as it sees fit, they're their sole responsibility and the System Architecture at large knows not about them.
 - **Business Logic:** the Internal Module's business logic component realizes the module's purpose (it may contain an internal router, expose different sets of ports for different APIs, whatever the Internal Module's writer desires, so long as the API Gateway knows how to interact with it).
 
-## HTTP API Endpoints
 
-The following endpoints are provided by default:
 
-- **`PUT <base_url>/nostr/dispatch`:** synchronous NOSTR API.
-- **`PUT <base_url>/nostr/publish`:** asynchronous NOSTR API.
-- **`* <base_url>/*`:** ad-hoc HTTP API endpoints.
 
----
 
-## Components
 
-### [Identity Provider](./identity-provider)
 
-- Public Registry
-- NIP-05
-- LUD-16
 
-### [Wallet Provider](./wallet-provider)
-
-- Create Users
-- Create Cards
-- List Transactions
-- Get balance
-- Holds Wallet data
-- Remove Card
-- Make payments
-- Generates LNURLp
-- Emits transaction events on nostr on wallet transactions (send/receive)
