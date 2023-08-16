@@ -227,7 +227,7 @@ The potential offenses include (but are not limited to):
   - at most one `"alt"` tag is required
 - malformed `.content` field
 
-Upon successfully parsing and validating the request body, the asynchronous NOSTR API endpoint (ie. `{base API url}/nostr/publish`) will respond with:
+Upon successfully parsing and validating the request body, the asynchronous NOSTR API endpoint (ie. `{base API url}/nostr/publish`) will send an `EVENT` message to the Local NOSTR Relay (via WebSockets) with the request body as data and respond with:
 
 ```http
 HTTP/1.1 202 Accepted
@@ -239,14 +239,34 @@ Content-Length: 0
 
 Where the `nostr:{nevent}` value of the `Location` header conforms to [NIP-21: `nostr:` URI Scheme](https://github.com/nostr-protocol/nips/blob/master/21.md) pointing to the event id in the request body.
 
-On the other hand, upon successfully parsing and validating the request body, the synchronous NOSTR API endpoint (ie. `{base API url}/nostr/dispatch`) will respond with:
+On the other hand, upon successfully parsing and validating the request body, the synchronous NOSTR API endpoint (ie. `{base API url}/nostr/dispatch`) will apply one more validation:
+
+- there should be **EXACTLY ONE** `"p"` tag within the `.tags` field.
+
+If this validation fails, the endpoint rill respond with:
+
+```http
+HTTP/1.1 422 Unprocessable Content
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+{additional headers may be present}
+```
+
+Otherwise, the API Gateway will query its internal routing table for the given `"p"` tag value, if no routing information is found, the endpoint responds with:
+
+```http
+HTTP/1.1 421 Misdirected Request
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+{additional headers may be present}
+```
+
+Finally, if the additional validation succeeded, and routing information is found for the single `"p"` tag value, the API Gateway will forward the request as-is to the corresponding internal module, and respond with:
 
 ```http
 HTTP/1.1 200 OK
 Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
 {additional headers may be present}
 
-{response body}
+{upstream response body}
 ```
 
 > **NOTE:** the API Gateway will respond successfully, even when the downstream server may respond with an error code.
