@@ -163,10 +163,92 @@ A NOSTR event is expected to define three related entities:
 
 In what follows we'll simply refer to an event's `AUTHOR`, `SIGNER`, and `TARGET`s as defined above, and refrain from referring to specific event fields or tag values or indices.
 
+## API Gateway (NOSTR Endpoints)
 
+The API Gateway exposes two endpoints intended to interact with the Local NOSTR Relay.
 
+- **`{base API url}/nostr/dispatch`:** the synchronous NOSTR API endpoint.
+- **`{base API url}/nostr/publish`:** the asynchronous NOSTR API endpoint.
 
+Both endpoints accept an `OPTIONS` request method with the following response:
 
+```http
+HTTP/1.1 204 No Content
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+Allow: OPTIONS, POST
+{additional headers may be present}
+```
 
+Upon being requested any method other than `OPTIONS` or `POST`, these endpoints respond with:
 
+```http
+HTTP/1.1 405 Method Not Allowed
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+Allow: OPTIONS, POST
+{additional headers may be present}
+```
 
+Both endpoints expect the body to consist of a NOSTR event JSON, if the content cannot be parsed as a valid JSON object, these endpoints respond with:
+
+```http
+HTTP/1.1 415 Unsupported Media Type
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+{additional headers may be present}
+```
+
+If the request contained an `Accept` header, and said header indicated a media type other than `application/json` or (preferably) `application/nostr+json`, these endpoints respond with:
+
+```http
+HTTP/1.1 406 Not Acceptable
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+{additional headers may be present}
+
+application/json
+```
+
+If the request's body _can_ be parsed as a JSON object, but this object does not conform to the NOSTR protocol specification, these endpoints respond with:
+
+```http
+HTTP/1.1 422 Unprocessable Content
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+{additional headers may be present}
+```
+
+The potential offenses include (but are not limited to):
+
+- missing first-level field: all of the basic NOSTR fields are **REQUIRED** (ie. `.id`, `.pubkey`, `.created_at`, `.kind`, `.tags`, `.content`, and `.sig`),
+- malformed field values: malformed `.id`, `.pubkey`, `created_at`, or `.sig` fields; additionally, malformed `.tags` contents:
+  - a single `"k"` tag is required,
+  - at least one `"p"` tag is required; additionally, it should not be malformed,
+  - at most one `"delegation"` tag is required; additionally:
+    - it should not be malformed,
+    - it should validate cryptographically, and
+    - the conditions query string should match the actual event, and
+  - at most one `"alt"` tag is required
+- malformed `.content` field
+
+Upon successfully parsing and validating the request body, the asynchronous NOSTR API endpoint (ie. `{base API url}/nostr/publish`) will respond with:
+
+```http
+HTTP/1.1 202 Accepted
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+Location: nostr:{nevent}
+Content-Length: 0
+{additional headers may be present}
+```
+
+Where the `nostr:{nevent}` value of the `Location` header conforms to [NIP-21: `nostr:` URI Scheme](https://github.com/nostr-protocol/nips/blob/master/21.md) pointing to the event id in the request body.
+
+On the other hand, upon successfully parsing and validating the request body, the synchronous NOSTR API endpoint (ie. `{base API url}/nostr/dispatch`) will respond with:
+
+```http
+HTTP/1.1 200 OK
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+{additional headers may be present}
+
+{response body}
+```
+
+> **NOTE:** the API Gateway will respond successfully, even when the downstream server may respond with an error code.
+> This apparent inconsistency can be easily explained: the API Gateway was indeed able to process the provided entity and route it, it just so happens that the routed entity raised an error in the downstream server.
+> Thus, "semantic" errors are dealt with as NOSTR events, returned by the downstream servers.
