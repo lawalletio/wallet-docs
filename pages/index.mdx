@@ -32,7 +32,7 @@ The internal components are:
 - **API Gateway:** this is the main generic interface with the outside world.
     The API Gateway is in charge of basic authentication, rate limiting, pacing, etc., and it's also the one responsible for routing the given REST request to the module handling it (or to the Local NOSTR Relay, if applicable).
 - **Local NOSTR Relay:** this is the backbone of the internal communication framework, **EVERY STATE-CHANGING MESSAGE SHOULD BE RUN THROUGH THE LOCAL NOSTR RELAY**, this is so that messages in the relay may be published to a _public_ relay for auditing.
-- **Modules:** these are the interconnected pieces doing the actual work.
+- **Internal Modules:** these are the interconnected pieces doing the actual work.
     Examples of actual internal modules are: Ledger Module, EVM-Gateway Module, NFC Card Module, etc.
 
 The arrows represent different API accesses to the Wallet Provider System.
