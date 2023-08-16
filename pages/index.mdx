@@ -93,6 +93,11 @@ Its constituent parts are:
 - **Resources _(optional)_ :** an Internal Module is free to declare and use as many resources as it sees fit, they're their sole responsibility and the System Architecture at large knows not about them.
 - **Business Logic:** the Internal Module's business logic component realizes the module's purpose (it may contain an internal router, expose different sets of ports for different APIs, whatever the Internal Module's writer desires, so long as the API Gateway knows how to interact with it).
 
+**ALL** Internal Modules are required to answer to (at least) one NOSTR Public Key.
+Furthermore, the API Gateway needs to know how to route HTTP requests to the appropriate internal module.
+
+In what follows, we'll assume that _all_ Internal Modules implicitly know the public keys every other internal module responds to; furthermore, we'll assume _all_ internal modules implicitly know how to route HTTP requests to the appropriate internal modules.
+
 
 
 
