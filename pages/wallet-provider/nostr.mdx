@@ -1,0 +1,64 @@
+# NOSTR Event Anatomy
+
+The expected form of _all_ NOSTR events transferred from, to, and within the wallet provider is as follows (re. [NIP-01: Basic Protocol Flow Description](https://github.com/nostr-protocol/nips/blob/master/01.md)):
+
+```json
+{
+  "id": "{32-bytes lowercase hex-encoded event ID}",
+  "pubkey": "{32-bytes lowercase hex-encoded public key of the event's SIGNER}",
+  "created_at": {UNIX timestamp in seconds},
+  "kind": 11111,
+  "tags": [
+    [
+      "k",
+      "{event sub-kind}"
+    ],
+    [
+      "p",
+      "{32-bytes lowercase hex-encoded public key of the event's TARGET}"
+    ],
+    "{additional 'p' tags may follow}",
+    [
+      "alt",
+      "{human-readable description of the event}"
+    ],
+    [
+      "delegation",
+      "{32-bytes lowercase hex-encoded public key of the event's AUTHOR}",
+      "{conditions query string: 'kind=11111&created_at>{UNIX timestamp lower limit in seconds}&created_at<{UNIX timestamp upper limit in seconds}'}",
+      "{delegation token: 64-byte lowercase hex-encoded Schnorr signature of the SHA256 hash of 'nostr:delegation:{value of the .pubkey field}:{conditions query string}' using the AUTHOR's secret key}"
+    ],
+    "{additional tags may follow}"
+  ],
+  "content": "{stringified JSON content}",
+  "sig": "{64-byte lowercase hex-encoded Schnorr signature of the event's .id field using the SIGNER's secret key}"
+}
+```
+
+The `.created_at` timestamp **MUST** be within 10 seconds of the Local NOSTR Relay's current timestamp (cf. [NIP-22: Event `created_at` Limits](https://github.com/nostr-protocol/nips/blob/master/22.md)).
+
+The `"k"` tag marks _what_ specific event sub-kind this event refers to.
+Note how a single `.kind` is reserved, multiplexing sub-kinds based off of the value of the `"k"` tag.
+The actual value of the `"k"` tag need not be an "integer string" and may instead be an arbitrary string (hopefully bearing some mnemonic meaning itself).
+This tag is **REQUIRED** and **MUST NOT** be repeated.
+
+At least one `"p"` tag **MUST** be provided, and these tags **SHOULD NOT** be repeated.
+
+The `"alt"` tag is prescribed in accordance to [NIP-31: Dealing with Unknown Event Kinds](https://github.com/nostr-protocol/nips/blob/master/31.md).
+This tag is **OPTIONAL** and **MUST NOT** be repeated.
+
+The `"delegation"` tag follows the guidelines exposed in [NIP-26: Delegated Event Signing](https://github.com/nostr-protocol/nips/blob/master/26.md).
+This tag is **OPTIONAL** and **MUST NOT** be repeated.
+
+The `.content` field **MUST** be a (properly escaped) stringified JSON object itself.
+
+## Event's `AUTHOR`, `SIGNER`, and `TARGET`s
+
+A NOSTR event is expected to define three related entities:
+
+- **The event's `SIGNER`:** is the entity actually signing the NOSTR event proper, filling in the `.pubkey` and `.signature` fields.
+- **The event's `AUTHOR`:** is the entity _on behalf of whom_ the NOSTR event is being created, found on index `1` of the `"delegation"` tag's content.
+  If there's no `"delegation"` tag, then the event's `AUTHOR` is the event's `SIGNER`.
+- **The event's `TARGET`s:** are the entities to which the NOSTR event should be routed, these are found on index `1`of each `"p"` tag.
+
+In what follows we'll simply refer to an event's `AUTHOR`, `SIGNER`, and `TARGET`s as defined above, and refrain from referring to specific event fields or tag values or indices.

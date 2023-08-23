@@ -1,0 +1,20 @@
+# Local NOSTR Relay Architecture
+
+The Local NOSTR Relay serves a dual purpose:
+
+1. on the one hand, it makes interacting between cooperating modules extremely simple and uniform,
+2. on the other, it allows for all the messages posted therein to be later (or parallelly) published ot external NOSTR relays for auditing.
+
+Internally, the Local NOSTR Relay is implemented thusly:
+
+![Local NOSTR Relay Architecture](assets/nostr-architecture.png)
+
+where:
+
+- **Local NOSTR Relay:** is the local NOSTR relay where NOSTR events are published.
+- **Read NOSTR Replica:** these are clusters of NOSTR relays that serve as read-only replicas.
+- **C:** the externally-subscribed clients.
+
+Note how this keeps the load on the write-relay relatively low, requiring only as many `REQ` subscriptions as are established by the Internal Modules, and as many replication streams as there are read-only replicas.
+
+The image above shows a simple, single-level replication structure, one could just as easily cascade read-only replicas in a tree structure so as to keep outgoing channels to a minimum in each specific relay; we judge that to only complicate exposition in this case, but large-scale implementations may very well require this.

@@ -1,6 +1,6 @@
 {
   "index": "Intro",
-  "getting-started": "Getting started",
-  "ledger": "Ledger",
-  "extensions": "Extensions"
+  "architecture": "Architecture",
+  "nostr": "NOSTR Event Anatomy",
+  "api-gateway": "API Gateway"
 }
