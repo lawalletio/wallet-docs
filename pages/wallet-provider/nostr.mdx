@@ -7,7 +7,7 @@ The expected form of _all_ NOSTR events transferred from, to, and within the wal
   "id": "{32-bytes lowercase hex-encoded event ID}",
   "pubkey": "{32-bytes lowercase hex-encoded public key of the event's SIGNER}",
   "created_at": {UNIX timestamp in seconds},
-  "kind": 11111,
+  "kind": {1111|21111|31111},
   "tags": [
     [
       "k",
@@ -24,8 +24,12 @@ The expected form of _all_ NOSTR events transferred from, to, and within the wal
     [
       "delegation",
       "{32-bytes lowercase hex-encoded public key of the event's AUTHOR}",
-      "{conditions query string: 'kind=11111&created_at>{UNIX timestamp lower limit in seconds}&created_at<{UNIX timestamp upper limit in seconds}'}",
+      "{conditions query string: 'kind={.kind}&created_at>{UNIX timestamp lower limit in seconds}&created_at<{UNIX timestamp upper limit in seconds}'}",
       "{delegation token: 64-byte lowercase hex-encoded Schnorr signature of the SHA256 hash of 'nostr:delegation:{value of the .pubkey field}:{conditions query string}' using the AUTHOR's secret key}"
+    ],
+    [
+      "d",
+      "{event sub-kind}:{identifier}"
     ],
     {additional tags may follow}
   ],
@@ -49,7 +53,21 @@ This tag is **OPTIONAL** and **MUST NOT** be repeated.
 The `"delegation"` tag follows the guidelines exposed in [NIP-26: Delegated Event Signing](https://github.com/nostr-protocol/nips/blob/master/26.md).
 This tag is **OPTIONAL** and **MUST NOT** be repeated.
 
+The `"d"` tag **MUST ONLY** be present when the event's `.kind` is 31111.
+If present, it must consist of the event sub-kind (ie. the value associated to the `"k"` tag), followed by a colon (ie. `:`), followed by whatever the actual identifier is to be (this is so that we can keep using a single kind to refer to _all_ parameterized replaceable events).
+
+The `"d"` and `"delegation"` tags are **mutually exclusive**.
+This directly implies that no event with a `.kind` of `31111` may be delegated.
+
 The `.content` field **MUST** be a (properly escaped) stringified JSON object itself.
+
+## Kinds and Sub-Kinds
+
+Notice how we reserve just 3 event kinds for usage:
+
+- `1111`: this is a **regular** event, expected ot be stored by relays.
+- `21111`: this is an **ephemeral** event, not expected to be actually stored by relays.
+- `31111`: this is a **parameterized replaceable** event, expected to replace any other event with the same kind (ie. `31111`), `.pubkey`, and `"d"` tag value (notice how, because our `"d"` tag values are prescribed to contain the `{event sub-kind}:` prefix, event sub-kinds are also taken into consideration).
 
 ## Event's `AUTHOR`, `SIGNER`, and `TARGET`s
 
