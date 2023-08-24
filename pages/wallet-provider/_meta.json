@@ -2,5 +2,6 @@
   "index": "Intro",
   "architecture": "Architecture",
   "nostr": "NOSTR Event Anatomy",
-  "api-gateway": "API Gateway"
+  "api-gateway": "API Gateway",
+  "flows": "Flows"
 }
