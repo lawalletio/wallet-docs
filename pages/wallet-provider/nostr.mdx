@@ -2,7 +2,7 @@
 
 The expected form of _all_ NOSTR events transferred from, to, and within the wallet provider is as follows (re. [NIP-01: Basic Protocol Flow Description](https://github.com/nostr-protocol/nips/blob/master/01.md)):
 
-```json
+```json showLineNumbers copy /AUTHOR/ /SIGNER/ /TARGET/
 {
   "id": "{32-bytes lowercase hex-encoded event ID}",
   "pubkey": "{32-bytes lowercase hex-encoded public key of the event's SIGNER}",
@@ -17,7 +17,6 @@ The expected form of _all_ NOSTR events transferred from, to, and within the wal
       "p",
       "{32-bytes lowercase hex-encoded public key of the event's TARGET}"
     ],
-    "{additional 'p' tags may follow}",
     [
       "alt",
       "{human-readable description of the event}"
@@ -28,7 +27,7 @@ The expected form of _all_ NOSTR events transferred from, to, and within the wal
       "{conditions query string: 'kind=11111&created_at>{UNIX timestamp lower limit in seconds}&created_at<{UNIX timestamp upper limit in seconds}'}",
       "{delegation token: 64-byte lowercase hex-encoded Schnorr signature of the SHA256 hash of 'nostr:delegation:{value of the .pubkey field}:{conditions query string}' using the AUTHOR's secret key}"
     ],
-    "{additional tags may follow}"
+    {additional tags may follow}
   ],
   "content": "{stringified JSON content}",
   "sig": "{64-byte lowercase hex-encoded Schnorr signature of the event's .id field using the SIGNER's secret key}"
