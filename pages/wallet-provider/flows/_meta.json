@@ -1,3 +1,4 @@
 {
-    "internal-transaction": "Internal Transaction"
+    "internal-transaction": "Internal Transaction",
+    "deposit-via-ln": "Deposit via LN"
 }
