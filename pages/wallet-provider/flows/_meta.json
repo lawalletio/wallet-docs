@@ -1,4 +1,5 @@
 {
     "internal-transaction": "Internal Transaction",
-    "deposit-via-ln": "Deposit via LN"
+    "deposit-via-ln": "Deposit via LN",
+    "deposit-via-zap": "Deposit via Zap"
 }
