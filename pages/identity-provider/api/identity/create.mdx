@@ -1,17 +1,17 @@
 # Create Identity
 
 Creates an Identity.
-**Required**: Authorized pubkey must sign the request.
+**Required**: Unburned nonce
 
 ---
 
 ## Request
 
-> **POST** /api/identity/create
+> **POST** /api/identity
 
 ### Parameters
 
-username
+name
 : `String`
 The username of the account to create
 
@@ -31,16 +31,17 @@ The **body** should be wrapped in a NOSTR event, included in the `content`
 {
   "id": "eventHash",
   "pubkey": "AUTHORIZED_PUB_KEY",
-  "created_at": 1673347337,
-  "kind": 1, // TODO: define kind
+  "kind": 1112,
   "content": {
-    "username": "string",
+    "name": "string",
     "pubkey": "string",
     "lud16": {
       ...
     }
   },
-  "tags": [],
+  "tags": [
+    ["nonce", "BURNABLE_NONCE"],
+  ],
   "sig": "signature of AUTHORIZED_PUB_KEY"
 }
 ```
@@ -100,7 +101,7 @@ Conflict
 ```json
 {
   "success": false,
-  "reason": "Username already taken"
+  "reason": "Name already taken"
 }
 ```
 
