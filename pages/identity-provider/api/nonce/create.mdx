@@ -1,0 +1,95 @@
+# Create Nonce
+
+Creates a Burnable nonce
+**Required**: Authorized pubkey must sign the request.
+
+---
+
+## Request
+
+> **POST** /api/nonce
+
+### Parameters
+
+Empty
+
+### Format
+
+The **body** should be wrapped in a NOSTR event, included in the `content`
+
+```json highlight=5-6
+{
+  "id": "eventHash",
+  "pubkey": "AUTHORIZED_PUB_KEY",
+  "kind": 1112,
+  "content": {}, // Empty
+  "tags": [],
+  "sig": "signature of AUTHORIZED_PUB_KEY"
+}
+```
+
+---
+
+## Response
+
+### 200
+
+Valid Response
+
+```json
+{
+  "success": true,
+  "nonce": "Nonce"
+}
+```
+
+### 400
+
+Malformed request
+
+```json
+{
+  "success": false,
+  "reason": "Should send as NOSTR event"
+}
+```
+
+### 403
+
+Forbidden operation
+
+```json
+{
+  "success": false,
+  "reason": "Pubkey not authorized"
+}
+```
+
+### 405
+
+Method Not Allowed
+
+```json
+{
+  "success": false,
+  "reason": "Must use POST method"
+}
+```
+
+### 409
+
+Conflict
+
+```json
+{
+  "success": false,
+  "reason": "Username already taken"
+}
+```
+
+```json
+{
+  "success": false,
+  "reason": "Pubkey already assigned to an existing account"
+}
+```
