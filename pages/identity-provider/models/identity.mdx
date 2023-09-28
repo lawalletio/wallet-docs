@@ -1,0 +1,28 @@
+# Identity
+
+Stores User Data
+
+## Schema
+
+- `pubkey` : String (Pubkey)
+- `name` : String
+- `lud16` : JSON
+- `nonceId` : Int
+
+## Relations
+
+- [Nonce](./nonce) - ONE
+
+## Prisma definition
+
+```prisma
+model Identity {
+  pubkey       String    @map("id")
+  name         String    @map("name")
+  nonce        Nonce @relation(fields: [nonceId], references: [id])
+  nonceId      Int
+
+  @@id([pubkey])
+  @@index([name])
+}
+```
