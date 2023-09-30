@@ -1,0 +1,51 @@
+# Get Identity
+
+Gets identity by name using NIP-05 standard
+
+---
+
+## Request
+
+> **GET** /.well-known/nostr.json?name=**NAME**
+
+### Parameters
+
+name
+: `String`
+The NAME to be matched
+
+---
+
+## Response
+
+### 200
+
+Valid Response
+
+```json
+{
+  "NAME": "PUBLIC KEY" // returns the public key associated with the name provided
+}
+```
+
+### 404
+
+Name not found
+
+```json
+{
+  "success": false,
+  "reason": "Not found"
+}
+```
+
+### 405
+
+Method Not Allowed
+
+```json
+{
+  "success": false,
+  "reason": "Must use GET method"
+}
+```

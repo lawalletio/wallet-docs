@@ -1,47 +1,29 @@
-# Create Identity
+# Create Nonce
 
-Creates an Identity.
-**Required**: Unburned nonce
+Creates a Burnable nonce
+**Required**: Authorized pubkey must sign the request.
 
 ---
 
 ## Request
 
-> **POST** /api/identity
+> **POST** /api/nonce
 
 ### Parameters
 
-name
-: `String`
-The username of the account to create
-
-pubkey
-: `String`
-User public key
-
-lud16
-: `JSON`
-LUD16 JSON response object
+Empty
 
 ### Format
 
 The **body** should be wrapped in a NOSTR event, included in the `content`
 
-```json highlight=7-8
+```json highlight=5-6
 {
   "id": "eventHash",
   "pubkey": "AUTHORIZED_PUB_KEY",
   "kind": 1112,
-  "content": {
-    "name": "string",
-    "pubkey": "string",
-    "lud16": {
-      ...
-    }
-  },
-  "tags": [
-    ["nonce", "BURNABLE_NONCE"],
-  ],
+  "content": {}, // Empty
+  "tags": [],
   "sig": "signature of AUTHORIZED_PUB_KEY"
 }
 ```
@@ -57,7 +39,7 @@ Valid Response
 ```json
 {
   "success": true,
-  "id": "Account UUID"
+  "nonce": "Nonce"
 }
 ```
 
@@ -101,7 +83,7 @@ Conflict
 ```json
 {
   "success": false,
-  "reason": "Name already taken"
+  "reason": "Username already taken"
 }
 ```
 

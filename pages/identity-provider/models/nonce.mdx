@@ -1,0 +1,27 @@
+# Nonce
+
+Burnable nonce
+
+## Schema
+
+- `id` : String (Autoincrement)
+- `nonce` : String
+- `burned` : Boolean
+- `identity` : Identity
+
+## Relations
+
+- [Identity](./identity) - ZERO OR ONE
+
+## Prisma definition
+
+> ⚠️ Need to be updated
+
+```prisma
+model Nonce {
+  id         Int     @id @default(autoincrement())
+  nonce      String  @unique
+  burned     Boolean @default(false)
+  identity   Identity?
+}
+```
