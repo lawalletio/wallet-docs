@@ -1,0 +1,57 @@
+# Get LUD16 + Extended (URLx)
+
+Gets LUD16 response by name using LUD-16 standard + federationId
+
+---
+
+## Request
+
+> **GET** /.well-known/**NAME**
+
+---
+
+## Response
+
+### 200
+
+Valid Response
+
+```json
+{
+  {
+  "tag": "payRequest",
+  "callback": "https://wallet.lacrypta.ar/lnurlp/api/v1/lnurl/cb/LY8AJP",
+  "minSendable": 1000,
+  "maxSendable": 100000000000,
+  "metadata": "[[\"text/plain\", \"Name to be shown\"]]",
+  "commentAllowed": 32,
+  "allowsNostr": true,
+  "nostrPubkey": "2a1ca5fbdfafa01efc025ca030f8a98aa4578584165e7b3c5c190100028a4744",
+  //
+  "federationId": "Lawallet.ar Federation's PUBKEY",
+}
+
+}
+```
+
+### 404
+
+Name not found
+
+```json
+{
+  "success": false,
+  "reason": "Not found"
+}
+```
+
+### 405
+
+Method Not Allowed
+
+```json
+{
+  "success": false,
+  "reason": "Must use GET method"
+}
+```
