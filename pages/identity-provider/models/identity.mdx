@@ -21,6 +21,7 @@ model Identity {
   name         String    @map("name")
   nonce        Nonce @relation(fields: [nonceId], references: [id])
   nonceId      Int
+  createdAt    DateTime @default(now())
 
   @@id([pubkey])
   @@index([name])
