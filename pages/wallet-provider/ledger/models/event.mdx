@@ -1,0 +1,39 @@
+# Event
+
+Stores UEvent list
+
+## Schema
+
+- `id` : UUID
+- `signature` : String
+- `author` : String
+- `signer` : String
+- `kind` : Int
+- `payload` : Json
+
+## Relations
+
+- [Transaction](./transaction) - ONE
+- [Balance](./balance) - MANY
+- [BalanceSnapshot](./balance-snapshot) - MANY
+
+## Prisma definition
+
+```prisma
+model Event {
+  id        String @map("id")
+  signature String @map("signature")
+  author    String @map("author")
+  signer    String @map("signer")
+  kind      Int    @map("kind")
+  payload   Json   @map("payload") @db.JsonB
+
+  transaction      Transaction?      @relation
+  balanceSnapshots BalanceSnapshot[] @relation
+  balances         Balance[]         @relation
+
+  @@id([id])
+  @@unique([signature])
+  @@map("events")
+}
+```

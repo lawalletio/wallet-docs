@@ -1,0 +1,68 @@
+# Internal Transaction Handler
+
+Handles internal transactions.
+
+## Overview
+
+This module provides the functionality to handle and process internal transactions initiated by users.
+
+## Dependencies
+
+- `@nostr-dev-kit/ndk`: Provides necessary types and filters for Nostr events.
+- `@lib/events`: Event-related constants and functions.
+- `@lib/transactions`: Transaction-related utilities and handlers.
+- `@lib/utils`: General utility functions.
+- `@prisma/client`: Prisma ORM client for database interactions.
+
+## Constants
+
+- `REPUBLISH_INTERVAL_MS`: Interval for republishing balance events.
+- `MAX_RETRIES`: Maximum number of retries for handling a transaction.
+
+## Filter
+
+- `filter`: The filter used to select relevant internal transactions.
+
+## Functions
+
+### `getHandler(ctx: Context, ntry: number): (nostrEvent: NostrEvent) => void`
+
+Returns the internal transaction handler function.
+
+#### Parameters
+
+- `ctx`: The context containing necessary information for transaction handling.
+- `ntry`: The number of retries for handling the transaction.
+
+#### Returns
+
+A function that handles internal transactions and initiates the necessary processes.
+
+### Handler Function
+
+#### Parameters
+
+- `nostrEvent`: The internal transaction Nostr event.
+
+#### Functionality
+
+1. Validates the sender's balance for each token.
+2. Initiates the transaction in the database.
+3. Manages balances for the sender's and receiver's accounts.
+4. Publishes corresponding success or error events.
+
+#### Retries
+
+- The handler supports a limited number of retries in case of failures.
+
+## Usage Example
+
+```typescript
+import { filter, getHandler } from '@path/to/internalTransactions';
+
+// Create a context (ctx) with necessary dependencies
+
+const internalTransactionHandler = getHandler(ctx, 0);
+
+// Subscribe to relevant Nostr events
+subscribeToNostrEvents(filter, internalTransactionHandler);

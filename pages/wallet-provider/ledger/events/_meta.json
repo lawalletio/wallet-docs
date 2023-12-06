@@ -1,0 +1,5 @@
+{
+    "inbound-transaction": "Inbound Transaction",
+    "internal-transaction": "Internal Transaction",
+    "outbound-transaction": "Outbound Transaction"
+  }
