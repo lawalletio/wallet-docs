@@ -1,0 +1,29 @@
+# Server Configuration Guide
+
+This guide provides an overview of the server configuration and startup process in the application. It covers key files such as `app.ts` and `index.ts` that play a crucial role in setting up the Express server, connecting to external services, and initializing critical components.
+
+## `app.ts`
+
+`app.ts` serves as the central configuration file for the Express server. It initializes key middleware and sets up security headers, logging, and CORS handling. This file plays a crucial role in defining how the server processes incoming requests and enhances security and development experience through various middleware.
+
+Key Features:
+- Initialization of Express application.
+- Configuration of logging using Morgan.
+- Security enhancements through Helmet middleware.
+- JSON body parsing using `express.json()`.
+- Cross-Origin Resource Sharing (CORS) configuration.
+
+This file provides a consolidated view of the middleware stack and server setup.
+
+## `index.ts`
+
+`index.ts` acts as the main entry point of the application. It imports and executes the necessary logic to start the server, connect to databases, and set up routes. This file plays a critical role in launching the application and initializing key components.
+
+Key Features:
+- Importing and executing server setup logic from `app.ts`.
+- Handling environment variable configurations.
+- Connecting to databases or external services (e.g., Nostr and Prisma).
+- Setting up routes and error handling middleware.
+- Starting the Express server to handle incoming requests.
+
+This file provides an overview of the application's startup process and critical dependencies.

@@ -1,0 +1,35 @@
+## Outbox Service
+
+This service module provides an `OutboxService` class for publishing events using NDK.
+
+### Classes:
+
+#### `OutboxService`
+
+- **Constructor:** `constructor(ndk: NDK)`
+
+  Creates an instance of `OutboxService` with the provided NDK instance.
+
+- **Method:** `publish(event: NostrEvent, relaySet?: NDKRelaySet): Promise<void>`
+
+  Publishes a Nostr event using the NDK instance and an optional relay set.
+
+### Usage Example:
+
+```typescript
+import { OutboxService } from '@services/outbox';
+import NDK from '@nostr-dev-kit/ndk';
+
+const ndk = new NDK();
+const outboxService = new OutboxService(ndk);
+
+const event = {
+  content: 'Event content',
+  created_at: Date.now(),
+  // Other event properties...
+};
+
+outboxService.publish(event)
+  .then(() => console.log('Event published successfully'))
+  .catch((error) => console.error('Error publishing event', error));
+```

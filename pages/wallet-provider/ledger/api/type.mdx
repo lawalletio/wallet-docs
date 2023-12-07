@@ -1,0 +1,80 @@
+# Type 
+
+The type folder contains TypeScript type definitions, contracts, and interfaces that play a crucial role in ensuring type safety and well-defined data structures throughout the project.
+
+## Error Response Contract
+
+This contract defines the structure of an error response, extending the `MessageResponseContract`.
+
+### Properties:
+
+- **`message`** (string): The error message.
+- **`stack`** (string, optional): The stack trace associated with the error.
+
+### Usage Example:
+
+```typescript
+import { ErrorResponseContract } from '@types/responses/error-response.contract';
+
+const errorResponse: ErrorResponseContract = {
+  message: 'An error occurred',
+  stack: 'Error stack trace...',
+};
+
+// Use errorResponse as needed
+```
+
+## Message Response Contract
+
+This contract defines the structure of a generic message response.
+
+### Properties:
+
+- **`message`** (string): The message content.
+
+### Usage Example:
+
+```typescript
+import { MessageResponseContract } from '@types/responses/message-response.contract';
+
+const messageResponse: MessageResponseContract = {
+  message: 'Operation completed successfully',
+};
+
+// Use messageResponse as needed
+```
+
+## Extended Request Interface
+
+This module defines an extended request interface for Express applications.
+
+### Interfaces:
+
+#### `Context`
+
+- **`prisma`** (PrismaClient): The Prisma client instance.
+- **`outbox`** (Outbox): The outbox service instance.
+
+#### `ExtendedRequest`
+
+- Extends Express `Request`.
+- **`context`** (Context): The context object containing Prisma and outbox instances.
+
+### Usage Example:
+
+```typescript
+import { ExtendedRequest, Context } from '@types/request';
+import express from 'express';
+
+const app = express();
+
+app.use((req: ExtendedRequest, res, next) => {
+  // Access Prisma and outbox through the context object
+  const prismaInstance = req.context.prisma;
+  const outboxInstance = req.context.outbox;
+
+  // Your middleware logic here
+
+  next();
+});
+```

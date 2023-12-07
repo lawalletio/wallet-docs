@@ -1,0 +1,5 @@
+{
+    "ndk" : "NDK",
+    "outbox": "Outbox Service",
+    "prisma": "Prisma Service"
+  }

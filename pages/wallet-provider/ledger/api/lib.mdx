@@ -1,0 +1,74 @@
+# Lib
+
+The `lib` folder contains various modules and utilities essential for the operation of the `Ledger` module. Below are the main files and folders:
+
+## `events.ts`
+
+The `events.ts` file defines functions for creating custom Nostr events. These events are crucial for communicating transactions and states to the Nostr system. Here are some key functions:
+
+### `txOkEvent(tx: ITransaction): NostrEvent`
+
+Creates a Nostr event after successfully processing a transaction.
+
+```typescript
+const tx = { /* ... */ };
+const nostrEvent = txOkEvent(tx);
+```
+
+## `lastHandled.ts`
+
+The `lastHandled.ts` file contains a `LastHandledTracker` class that keeps track of the most recent handled Nostr events. This is essential to avoid duplicate event processing. Here's how to use it:
+
+### `LastHandledTracker`
+
+```typescript
+const tracker = new LastHandledTracker(readNDK, writeNDK, ['handler1', 'handler2']);
+await tracker.fetchLastHandled();
+```
+
+## `transactions.ts`
+
+The `transactions.ts` file defines functions and types related to transactions. Some key functions include:
+
+### `getTxHandler(ctx: Context, ntry: number, txType: TransactionType, handler: Function)`
+
+Creates an event handler for a specific transaction.
+
+```typescript
+const handler = getTxHandler(ctx, 0, TransactionType.INBOUND, myTransactionHandler);
+```
+
+## `utils.ts`
+
+The utils.ts file contains general-purpose functions and utilities used throughout the module. Some of the functions include:
+
+### `setUpRoutes(router: Router, path: string): Router`
+
+Configures Express router paths based on files in a specific location.
+
+```typescript
+const router = express.Router();
+setUpRoutes(router, './routes');
+```
+
+## Middlewares
+
+The middlewares folder contains common middleware functions. Some of them are:
+
+### `error.middleware.ts`
+
+```typescript
+import { errorHandler } from '@lib/middlewares/error.middleware';
+
+app.use(errorHandler);
+
+```
+
+### `not-found.middleware.ts`
+
+```typescript
+import { notFound } from '@lib/middlewares/not-found.middleware';
+
+app.use(notFound);
+```
+

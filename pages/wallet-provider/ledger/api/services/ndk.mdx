@@ -1,0 +1,36 @@
+## NDK Service
+
+This service module provides functions for managing NDK (Nostr Development Kit) instances.
+
+### Functions:
+
+#### `getReadNDK()`
+
+Returns the NDK instance for fetching events from relays. Creates it if it does not exist.
+
+#### `getWriteNDK()`
+
+Returns the NDK instance for publishing events to the relay. Creates it if it does not exist.
+
+#### `getSignerNDK()`
+
+Returns an NDK instance with a private key signer.
+
+#### `connectToTempRelays(relayUrls: string[], ndk: NDK): NDKRelaySet`
+
+Returns a set of connected relays for publishing. Reuses connections to known relays.
+
+### Usage Example:
+
+```typescript
+import { getReadNDK, getWriteNDK, connectToTempRelays } from '@services/ndk';
+import NDKRelaySet from '@nostr-dev-kit/ndk';
+
+const readNDK = getReadNDK();
+const writeNDK = getWriteNDK();
+const relayUrls = ['https://relay1.com', 'https://relay2.com'];
+
+const relaySet = connectToTempRelays(relayUrls, readNDK);
+
+// Use readNDK, writeNDK, and relaySet as needed
+```
