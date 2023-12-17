@@ -4,27 +4,31 @@ Stores User current balance token balance for a user
 
 ## Schema
 
-- `account` : ([Account](./account))
-- `token` : ([Token](./token))
-- `snapshot` : ([BalanceSnapshot](./balance-snapshot))
+- `accountId` : ID
+- `tokenId` : UUID
+- `snapshotId` : UUID
+- `eventId` : ID
 
 ## Relations
 
-- [Account](./account) - MANY
-- [Token](./token) - MANY
+- [Token](./token) - ONE
 - [BalanceSnapshot](./balance-snapshot) - ONE
+- [BalanceSnapshot](./balance-snapshot)(dummy_snapshot) - MANY
+- [Event](./event) - ONE
 
 ## Prisma definition
 
 ```prisma
 model Balance {
-  accountId      String            @map("account_id") @db.Uuid
-  tokenId        String            @map("token_id") @db.Uuid
-  snapshotId     String            @map("snapshot_id") @db.Uuid
-  account        Account           @relation(fields: [accountId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  accountId  String @map("account_id")
+  tokenId    String @map("token_id") @db.Uuid
+  snapshotId String @map("snapshot_id") @db.Uuid
+  eventId    String @map("event_id")
+
   token          Token             @relation(fields: [tokenId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  snapshot       BalanceSnapshot   @relation("balance_to_snapshot", fields: [snapshotId], references: [id])
-  dummy_snapshot BalanceSnapshot[] @relation("snapshot_to_balance") @ignore
+  snapshot       BalanceSnapshot   @relation("balance_to_snapshot", fields: [snapshotId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  dummy_snapshot BalanceSnapshot[] @relation("snapshot_to_balance")
+  event          Event             @relation(fields: [eventId], references: [id], onUpdate: NoAction, onDelete: NoAction)
 
   @@id([accountId, tokenId])
   @@unique([snapshotId])

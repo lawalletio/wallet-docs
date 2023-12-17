@@ -1,5 +1,5 @@
 {
+  "index" : "Intro",
   "api": "API",
-  "models": "Models",
-  "events": "Events"
+  "models": "Models" 
 }

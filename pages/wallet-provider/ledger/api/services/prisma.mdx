@@ -1,0 +1,21 @@
+## Prisma Service
+
+This service module provides a function for managing the Prisma client instance.
+
+### Functions:
+
+#### `getPrisma(): PrismaClient`
+
+Returns the Prisma client instance. Creates it if it does not exist.
+
+### Usage Example:
+
+```typescript
+import { getPrisma } from '@services/prisma';
+import { PrismaClient } from '@prisma/client';
+
+const prisma: PrismaClient = getPrisma();
+
+// Use prisma as needed for database operations
+
+```

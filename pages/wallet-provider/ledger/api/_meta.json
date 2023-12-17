@@ -1,0 +1,8 @@
+{
+    "lib" : "Lib",
+    "events": "Nostr Events",
+    "services": "Services",
+    "type": "Type",
+    "serverConfiguration": "Server Configuration"
+  }
+  

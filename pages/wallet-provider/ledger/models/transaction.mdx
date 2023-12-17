@@ -1,0 +1,36 @@
+# Transaction
+
+TRansactions with inputs and outputs
+
+## Schema
+
+- `id` : UUID
+- `transactionTypeId` : UUID 
+- `payload` : JSON
+- `eventId` : ID
+
+## Relations
+
+- [TransactionTypeType](./transaction-type) - ONE
+- [BalanceSnapshot](./balance-snapshot) - MANY
+- [Event](./event) - ONE
+
+## Prisma definition
+
+```prisma
+model Transaction {
+  id                String    @map("id") @db.Uuid
+  transactionTypeId String    @map("transaction_type_id") @db.Uuid
+  payload           Json      @map("payload") @db.JsonB
+  eventId           String    @map("event_id")
+
+  transactionType TransactionType   @relation(fields: [transactionTypeId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  snapshots       BalanceSnapshot[] @relation
+  event           Event             @relation(fields: [eventId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
+  @@id([id])
+  @@unique([eventId])
+  @@map("transactions")
+}
+}
+```

@@ -1,0 +1,68 @@
+# Outbound Transaction Handler
+
+Handles outbound transactions on the Nostr platform.
+
+## Overview
+
+This module provides the functionality to handle and process outbound transactions initiated by burners.
+
+## Dependencies
+
+- `@nostr-dev-kit/ndk`: Provides necessary types and filters for Nostr events.
+- `@lib/events`: Event-related constants and functions.
+- `@lib/transactions`: Transaction-related utilities and handlers.
+- `@lib/utils`: General utility functions.
+- `@prisma/client`: Prisma ORM client for database interactions.
+
+## Constants
+
+- `REPUBLISH_INTERVAL_MS`: Interval for republishing balance events.
+- `MAX_RETRIES`: Maximum number of retries for handling a transaction.
+
+## Filter
+
+- `filter`: The filter used to select relevant outbound transactions.
+
+## Functions
+
+### `getHandler(ctx: Context, ntry: number): (nostrEvent: NostrEvent) => void`
+
+Returns the outbound transaction handler function.
+
+#### Parameters
+
+- `ctx`: The context containing necessary information for transaction handling.
+- `ntry`: The number of retries for handling the transaction.
+
+#### Returns
+
+A function that handles outbound transactions and initiates the necessary processes.
+
+### Handler Function
+
+#### Parameters
+
+- `nostrEvent`: The outbound transaction Nostr event.
+
+#### Functionality
+
+1. Validates the burner's authority to burn funds.
+2. Initiates the transaction in the database.
+3. Manages balances for the burner's account.
+4. Publishes corresponding success or error events.
+
+#### Retries
+
+- The handler supports a limited number of retries in case of failures.
+
+## Usage Example
+
+```javascript
+import { filter, getHandler } from '@path/to/outboundTransactions';
+
+// Create a context (ctx) with necessary dependencies
+
+const outboundTransactionHandler = getHandler(ctx, 0);
+
+// Subscribe to relevant Nostr events
+subscribeToNostrEvents(filter, outboundTransactionHandler);

@@ -1,0 +1,25 @@
+# Transaction Type
+
+Declares Transaction types
+
+## Schema
+
+- `id` : UUID
+- `description` : String
+
+## Relations
+
+- [Transaction](./transaction) - MANY
+
+## Prisma definition
+
+```prisma
+model TransactionType {
+  id          String    @map("id") @db.Uuid
+  description String    @map("description")
+  transactions Transaction[] @relation
+
+  @@id([id])
+  @@map("Transaction_types")
+}
+```
