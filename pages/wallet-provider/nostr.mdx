@@ -79,3 +79,42 @@ A NOSTR event is expected to define three related entities:
 - **The event's `TARGET`s:** are the entities to which the NOSTR event should be routed, these are found on index `1`of each `"p"` tag.
 
 In what follows we'll simply refer to an event's `AUTHOR`, `SIGNER`, and `TARGET`s as defined above, and refrain from referring to specific event fields or tag values or indices.
+
+## Multi-NIP-04
+
+We extend the [NIP-04](https://github.com/nostr-protocol/nips/blob/master/04.md) specification so as to be able to have multi-recipients.
+To that end, the event's `.content` `MUST` be the JSON stringification of the following object:
+
+```javascript
+{
+  "mac": BASE64_ENCODE(SHA256("{MESSAGE}")),
+  "enc": NIP04LIKE_ENCRYPT("{MESSAGE}", "{RANDOM_MESSAGE_KEY}"),
+  "key": {
+    HEX_ENCODE("{RECEIVER_1_PUBLIC_KEY}"): NIP04_ENCRYPT("{SENDER_PRIVATE_KEY}", "{RECEIVER_1_PUBLIC_KEY}", HEX_ENCODE("{RANDOM_MESSAGE_KEY}")),
+    HEX_ENCODE("{RECEIVER_2_PUBLIC_KEY}"): NIP04_ENCRYPT("{SENDER_PRIVATE_KEY}", "{RECEIVER_2_PUBLIC_KEY}", HEX_ENCODE("{RANDOM_MESSAGE_KEY}")),
+    ...
+    HEX_ENCODE("{RECEIVER_N_PUBLIC_KEY}"): NIP04_ENCRYPT("{SENDER_PRIVATE_KEY}", "{RECEIVER_N_PUBLIC_KEY}", HEX_ENCODE("{RANDOM_MESSAGE_KEY}"))
+  },
+  "alg": "sha256:nip-04:nip-04"
+}
+```
+
+Where:
+
+- **`HEX_ENCODE()`:** is a function performing the byte-by-byte hex encoding of its given binary argument
+- **`BASE64_ENCODE()`:** is a function performing the base64 encoding of its given binary argument
+- **`SHA256()`:** is a function calculating the SHA-256 hash of its given binary argument
+- **`NIP04_ENCRYPT()`:** is a function applying the standard NIP-04 encryption
+- **`NIP04LIKE_ENCRYPT()`:** is a function generating the same output as NIP04_ENCRYPT, but using the given symmetric key instead of deriving a shared secret from the sender's private key and the recipient's public key
+
+Note that a fixed-length (ie. 16 bytes) random message key is used to encrypt the message itself (`RANDOM_MESSAGE_KEY` in the explanation above), and said key is then itself encrypted under each receiver's public key in turn.
+Additionally, the function of the `.mac` field is to ensure that all recipients may check each received the same message.
+Finally, the `.alg` field is provided for future extension.
+
+## Federation Public Keys
+
+The `lawallet.ar` federation exposes the following modules and their corresponding public keys:
+
+- Ledger: `bd9b0b60d5cd2a9df282fc504e88334995e6fac8b148fa89e0f8c09e2a570a84`
+- URLx: `e17feb5f2cf83546bcf7fd9c8237b05275be958bd521543c2285ffc6c2d654b3`
+- Card: `18f6a706091b421bd9db1ec964b4f934007fb6997c60e3c500fdaebe5f9f7b18`
