@@ -7,7 +7,7 @@ The expected form of _all_ NOSTR events transferred from, to, and within the wal
   "id": "{32-bytes lowercase hex-encoded event ID}",
   "pubkey": "{32-bytes lowercase hex-encoded public key of the event's SIGNER}",
   "created_at": {UNIX timestamp in seconds},
-  "kind": {1111|21111|31111},
+  "kind": {1112|21111|31111},
   "tags": [
     [
       "k",
@@ -65,7 +65,7 @@ The `.content` field **MUST** be a (properly escaped) stringified JSON object it
 
 Notice how we reserve just 3 event kinds for usage:
 
-- `1111`: this is a **regular** event, expected ot be stored by relays.
+- `1112`: this is a **regular** event, expected ot be stored by relays.
 - `21111`: this is an **ephemeral** event, not expected to be actually stored by relays.
 - `31111`: this is a **parameterized replaceable** event, expected to replace any other event with the same kind (ie. `31111`), `.pubkey`, and `"d"` tag value (notice how, because our `"d"` tag values are prescribed to contain the `{event sub-kind}:` prefix, event sub-kinds are also taken into consideration).
 
