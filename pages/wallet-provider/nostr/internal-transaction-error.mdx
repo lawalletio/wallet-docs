@@ -1,0 +1,71 @@
+# Internal Transaction Error
+
+This event is used to communicate errors encountered when trying to transfer tokens between pubkeys in the Ledger module.
+
+## Event Signature
+
+An _Internal Transaction Error_ event has the following form:
+
+```javascript
+{
+  "id": "{eventId}",
+  "pubkey": "{ledgerPubkey}",
+  "created_at": timestamp,
+  "kind": 1112,
+  "tags": [
+    ["p", "{senderPubkey}"],
+    ["p", "{receiverPubkey}"],
+    ["e", "{internalTransactionEventId}"],
+    ["t", "internal-transaction-error"],
+    ...,
+  ],
+  "content": "{internalTransactionErrorContent}",
+  "sig": "{signature}"
+}
+```
+
+Note:
+
+- the `.pubkey` is the [Ledger module's pubkey](../nostr#federation-public-keys),
+- the `.kind` field is `1112` (ie. a regular event),
+- the first `"p"` tag points to the _sender_ client's pubkey,
+- the second `"p"` tag points to the _receiver_ client's pubkey,
+- the `"t"` tag sub-kind is `internal-transaction-error`.
+
+The content itself is the JSON serialization of an object of the following form:
+
+```javascript
+{
+    "messages": [
+      "{errorMessage}"
+    ]
+}
+```
+
+An example TypeScript `type` definition for this event's content is:
+
+```typescript
+type InternalTransactionErrorContent = {
+    messages: [string],
+};
+```
+
+## Emitters
+
+This event is emitted by:
+
+- The Ledger module, when an [internal transaction](./internal-transaction-start) event fails for whatever reason.
+
+## Targets
+
+This event is targeted towards:
+
+- The _sender_ client.
+
+## Listeners
+
+This event is listened for by:
+
+- The _sender_ client.
+- The _receiver_ client.
+- Any other agent listening for this event will learn about failures to transfer funds between pubkeys.

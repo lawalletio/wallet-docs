@@ -4,6 +4,9 @@
   "inbound-transaction-start": "Inbound Transaction Start",
   "inbound-transaction-error": "Inbound Transaction Error",
   "inbound-transaction-ok": "Inbound Transaction Ok",
+  "internal-transaction-start": "Internal Transaction Start",
+  "internal-transaction-error": "Internal Transaction Error",
+  "internal-transaction-ok": "Internal Transaction Ok",
   "outbound-transaction-start": "Outbound Transaction Start",
   "outbound-transaction-error": "Outbound Transaction Error",
   "outbound-transaction-ok": "Outbound Transaction Ok"

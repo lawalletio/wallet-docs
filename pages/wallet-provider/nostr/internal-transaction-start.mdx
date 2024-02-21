@@ -1,0 +1,76 @@
+# Internal Transaction Start
+
+This event is used to transfer tokens between pubkeys in the Ledger module.
+
+## Event Signature
+
+An _internal Transaction Start_ event has the following form:
+
+```javascript
+{
+  "id": "{eventId}",
+  "pubkey": "{senderPubkey}",
+  "created_at": timestamp,
+  "kind": 1112,
+  "tags": [
+    ["p", "{ledgerPubkey}"],
+    ["p", "{receiverPubkey}"],
+    ["t", "internal-transaction-start"],
+    ...,
+  ],
+  "content": "{internalTransactionContent}",
+  "sig": "{signature}"
+}
+```
+
+Note:
+
+- the `.pubkey` is the _sender_ client's pubkey,
+- the `.kind` field is `1112` (ie. a regular event),
+- the first `"p"` tag points to the [Ledger module's pubkey](../nostr#federation-public-keys),
+- the second `"p"` tag points to the _receiver_ client's pubkey,
+- the `"t"` tag sub-kind is `internal-transaction-start`.
+
+The content itself is the JSON serialization of an object of the following form:
+
+```javascript
+{
+    "tokens": {
+        "{tokenName}": tokenAmount,
+        ...,
+    },
+    "memo": "{memoString}"
+}
+```
+
+Where the `.memo` entry is optional.
+Each `tokenAmount` must be positive, and each `tokenName` must exist in the Ledger module (notice that the `BTC` token **is expressed in milli-satoshis**).
+
+An example TypeScript `type` definition for this event's content is:
+
+```typescript
+type InternalTransactionStartContent = {
+    tokens: Record<string, bigint>,
+    memo?: string,
+};
+```
+
+## Emitters
+
+This event is emitted by:
+
+- The _sender_ client.
+
+## Targets
+
+This event is targeted towards:
+
+- The Ledger module.
+
+## Listeners
+
+This event is listened for by:
+
+- The Ledger module.
+- The _receiver_ client.
+- Any other agent listening for this event will learn about the cash flow between pubkeys.
