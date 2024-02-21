@@ -80,6 +80,11 @@ A NOSTR event is expected to define three related entities:
 
 In what follows we'll simply refer to an event's `AUTHOR`, `SIGNER`, and `TARGET`s as defined above, and refrain from referring to specific event fields or tag values or indices.
 
+## Replaceable Event Treatment
+
+Since NOSTR replaceable events may "collide" if both of them happen to happen on the exact same second, internal modules are prepared to **re-compute and re-publish** replaceable events with a one-second delay.
+This ensures that replaceable events are eventually consistent with the platform's internal state.
+
 ## Multi-NIP-04
 
 We extend the [NIP-04](https://github.com/nostr-protocol/nips/blob/master/04.md) specification so as to be able to have multi-recipients.
