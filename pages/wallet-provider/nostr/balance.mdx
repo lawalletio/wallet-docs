@@ -1,0 +1,54 @@
+# Balance
+
+This event is used to inform about a client's balance on a token-per-token basis.
+
+This event being replaceable, [replaceable event treatment considerations](../nostr#replaceable-event-treatment) apply.
+
+## Event Signature
+
+A _Balance_ event has the following form:
+
+```javascript
+{
+  "id": "{eventId}",
+  "pubkey": "{ledgerPubkey}",
+  "created_at": timestamp,
+  "kind": 31111,
+  "tags": [
+    ["p", "{clientPubkey}"],
+    ["d", "balance:{token}:{clientPubkey}"],
+    ["e", "{lastModificatoinEventId}"],
+    ["amount", "{currentBalance}"]
+  ],
+  "content": "{}",
+  "sig": "{signature}"
+}
+```
+
+Note:
+
+- the `.pubkey` is the client's pubkey,
+- the `.kind` field is `31111` (ie. a replaceable event),
+- the `"p"` tag points to the client's pubkey,
+- the `"d"` tag groups all `balance` events by token name and client pubkey,
+- the `"e"` tag points to the last event generating a balance change for the client in question.
+- the `"amount"` tag contains the stringification of the client's current balance.
+
+## Emitters
+
+This event is emitted by:
+
+- The Ledger module, when any transaction event is successfully completed.
+
+## Targets
+
+This event is targeted towards:
+
+- The client in question.
+
+## Listeners
+
+This event is listened for by:
+
+- The client in question module.
+- Any other agent listening for this event will about the pubkey's cash flow.

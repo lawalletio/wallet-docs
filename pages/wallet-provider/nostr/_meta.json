@@ -1,4 +1,5 @@
 {
+  "balance": "Balance",
   "card-config-change": "Card Config Change",
   "card-config-change-ack": "Card Config Change Acknowledgement",
   "inbound-transaction-start": "Inbound Transaction Start",
