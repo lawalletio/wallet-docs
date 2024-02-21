@@ -1,0 +1,74 @@
+# Inbound Transaction Ok
+
+This event is used to communicate the successful "minting" of new tokens from the outside world into the Ledger module's attention.
+
+## Event Signature
+
+An _Inbound Transaction Ok_ event has the following form:
+
+```javascript
+{
+  "id": "{eventId}",
+  "pubkey": "{ledgerPubkey}",
+  "created_at": timestamp,
+  "kind": 1112,
+  "tags": [
+    ["p", "{minterPubkey}"],
+    ["p", "{minterPubkey}"],
+    ["e", "{inboundTransactionEventId}"],
+    ["t", "inbound-transaction-ok"],
+    ...,
+  ],
+  "content": "{inboundTransactionOkContent}",
+  "sig": "{signature}"
+}
+```
+
+Note:
+
+- the `.pubkey` is the [Ledger module's pubkey](../nostr#federation-public-keys),
+- the `.kind` field is `1112` (ie. a regular event),
+- both `"p"` tags point to the [URLx module's pubkey](../nostr#federation-public-keys) (ie. the _minter_),
+- the `"t"` tag sub-kind is `inbound-transaction-ok`.
+
+The content itself is the JSON serialization of an object of the following form:
+
+```javascript
+{
+    "tokens": {
+        "{tokenName}": tokenAmount,
+        ...,
+    },
+    "memo": "{memoString}"
+}
+```
+
+An example TypeScript `type` definition for this event's content is:
+
+```typescript
+type InboundTransactionOkContent = {
+    tokens: Record<string, bigint>,
+    memo?: string,
+};
+```
+
+Not that both of these are equal to those for [Inbound Transaction Start](./inbound-transaction-start) events.
+
+## Emitters
+
+This event is emitted by:
+
+- The Ledger module, when an [inbound transaction](./inbound-transaction-start) event is successfully completed.
+
+## Targets
+
+This event is targeted towards:
+
+- The URLs module.
+
+## Listeners
+
+This event is listened for by:
+
+- The URLs module.
+- Any other agent listening for this event will learn about successfully processed paid Lightning invoices.

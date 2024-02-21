@@ -1,0 +1,69 @@
+# Inbound Transaction Error
+
+This event is used to communicate errors encountered when trying to "mint" new tokens from the outside world into the Ledger module's attention.
+
+## Event Signature
+
+An _Inbound Transaction Error_ event has the following form:
+
+```javascript
+{
+  "id": "{eventId}",
+  "pubkey": "{ledgerPubkey}",
+  "created_at": timestamp,
+  "kind": 1112,
+  "tags": [
+    ["p", "{minterPubkey}"],
+    ["p", "{minterPubkey}"],
+    ["e", "{inboundTransactionEventId}"],
+    ["t", "inbound-transaction-error"],
+    ...,
+  ],
+  "content": "{inboundTransactionErrorContent}",
+  "sig": "{signature}"
+}
+```
+
+Note:
+
+- the `.pubkey` is the [Ledger module's pubkey](../nostr#federation-public-keys),
+- the `.kind` field is `1112` (ie. a regular event),
+- both `"p"` tags point to the [URLx module's pubkey](../nostr#federation-public-keys) (ie. the _minter_),
+- the `"t"` tag sub-kind is `inbound-transaction-error`.
+
+The content itself is the JSON serialization of an object of the following form:
+
+```javascript
+{
+    "messages": [
+      "{errorMessage}"
+    ]
+}
+```
+
+An example TypeScript `type` definition for this event's content is:
+
+```typescript
+type InboundTransactionErrorContent = {
+    messages: [string],
+};
+```
+
+## Emitters
+
+This event is emitted by:
+
+- The Ledger module, when an [inbound transaction](./inbound-transaction-start) event fails for whatever reason.
+
+## Targets
+
+This event is targeted towards:
+
+- The URLs module.
+
+## Listeners
+
+This event is listened for by:
+
+- The URLs module.
+- Any other agent listening for this event will learn about failures to process paid Lightning invoices.

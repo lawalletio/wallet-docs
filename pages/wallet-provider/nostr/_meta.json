@@ -1,4 +1,7 @@
 {
-  "card-config-change": "Card Config Change Event",
-  "card-config-change-ack": "Card Config Change Acknowledgement Event"
+  "card-config-change": "Card Config Change",
+  "card-config-change-ack": "Card Config Change Acknowledgement",
+  "inbound-transaction-start": "Inbound Transaction Start",
+  "inbound-transaction-error": "Inbound Transaction Error",
+  "inbound-transaction-ok": "Inbound Transaction Ok"
 }

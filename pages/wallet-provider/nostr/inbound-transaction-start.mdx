@@ -1,0 +1,75 @@
+# Inbound Transaction Start
+
+This event is used to "mint" new tokens from the outside world into the Ledger module's attention.
+
+## Event Signature
+
+An _Inbound Transaction Start_ event has the following form:
+
+```javascript
+{
+  "id": "{eventId}",
+  "pubkey": "{minterPubkey}",
+  "created_at": timestamp,
+  "kind": 1112,
+  "tags": [
+    ["p", "{ledgerPubkey}"],
+    ["p", "{minterPubkey}"],
+    ["t", "inbound-transaction-start"],
+    ...,
+  ],
+  "content": "{transactionContent}",
+  "sig": "{signature}"
+}
+```
+
+Note:
+
+- the `.pubkey` is the [URLx module's pubkey](../nostr#federation-public-keys) (ie. the _minter_),
+- the `.kind` field is `1112` (ie. a regular event),
+- the first `"p"` tag points to the [Ledger module's pubkey](../nostr#federation-public-keys),
+- the second `"p"` tag points to the [URLx module's pubkey](../nostr#federation-public-keys),
+- the `"t"` tag sub-kind is `inbound-transaction-start`.
+
+The content itself is the JSON serialization of an object of the following form:
+
+```javascript
+{
+    "tokens": {
+        "{tokenName}": tokenAmount,
+        ...,
+    },
+    "memo": "{memoString}"
+}
+```
+
+Where the `.memo` entry is optional.
+Each `tokenAmount` must be positive, and each `tokenName` must exist in the Ledger module (notice that the `BTC` token **is expressed in milli-satoshis**).
+
+An example TypeScript `type` definition for this event's content is:
+
+```typescript
+type InboundTransactionStartContent = {
+    tokens: Record<string, bigint>,
+    memo?: string,
+};
+```
+
+## Emitters
+
+This event is emitted by:
+
+- The URLx module, when an invoice is paid to its name.
+
+## Targets
+
+This event is targeted towards:
+
+- The Ledger module.
+
+## Listeners
+
+This event is listened for by:
+
+- The Ledger module.
+- Any other agent listening for this event will learn about the cash flow of the URLx module.
