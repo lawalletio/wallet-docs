@@ -1,0 +1,106 @@
+# Card Config Change Acknowledgement
+
+This event is used to signal the successful change of an NFC card's configuration for a given client.
+It serves as the configuration repository for the client in question, by realizing this via a replaceable event tagged with the client's pubkey.
+
+## Event Signature
+
+A _Card Config Change Acknowledgement_ event has the following form:
+
+```javascript
+{
+  "id": "{eventId}",
+  "pubkey": "{cardPubkey}",
+  "created_at": timestamp,
+  "kind": 31111,
+  "tags": [
+    ["p", "{clientPubkey}"],
+    ["e", "{acknowledgedEventId}"],
+    ["t", "card-config"],
+    ["d", "{clientPubkey}:card-config"],
+    ...,
+  ],
+  "content": "{cardConfigContent}",
+  "sig": "{signature}"
+}
+```
+
+Note:
+
+- the `.pubkey` is the [Card module's pubkey](../nostr#federation-public-keys),
+- the `.kind` field is `31111` (ie. a parameterized-replaceable event),
+- the `"e"` tag points to the [Card Config Change](../card-config-change) event being acknowledged,
+- the `"t"` tag sub-kind is `card-config`,
+- the `"d"` tag groups all `card-config` events by client pubkey.
+
+The content itself is the [Multi NIP-04](../nostr#multi-nip-04) encryption of the JSON serialization of an object of the following form:
+
+```javascript
+{
+    "trusted-merchants": [
+        { "pubkey": "{merchantPubkey}" },
+        ...,
+    ],
+    "cards": {
+        "{cardUuid}": {
+            "name": "{cardName}",
+            "description": "{cardDescription}",
+            "status": "{ENABLED / DISABLED}",
+            "limits": [
+                {
+                    "name": "{limitName}",
+                    "description": "{limitDescription}",
+                    "token": "{limitToken}",
+                    "amount": limitAmount,
+                    "delta": limitTimeDelta
+                },
+                ...,
+            ]
+        },
+    }
+}
+```
+
+Where the _no_ entry is optional.
+
+An example TypeScript `type` definition for this event's content is:
+
+```typescript
+type CardConfigContent = {
+    "trusted-merchants": {
+        pubkey: string,
+    }[],
+    cards: {
+        [cardUuid: string]: {
+            name: string,
+            description: string,
+            status: "ENABLED" | "DISABLED",
+            limits: {
+                name: string,
+                description: string,
+                token: string,
+                amount: bigint,
+                delta: number,
+            },
+        },
+    },
+};
+```
+
+## Emitters
+
+This event is emitted by:
+
+- The Card module.
+
+## Targets
+
+This event is targeted towards:
+
+- The individual Client that emitted the original event.
+
+## Listeners
+
+This event is listened for by:
+
+- Any agent other than the target listening for this event will learn nothing other than the specific client having potentially changed its cards configuration.

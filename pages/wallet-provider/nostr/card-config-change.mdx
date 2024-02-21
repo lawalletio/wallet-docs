@@ -1,0 +1,106 @@
+# Card Config Change
+
+This event is used to change a client's NFC card configuration, including the card's name, description, limits, and trusted merchant list.
+
+## Event Signature
+
+A _Card Config Change_ event has the following form:
+
+```javascript
+{
+  "id": "{eventId}",
+  "pubkey": "{clientPubkey}",
+  "created_at": timestamp,
+  "kind": 1112,
+  "tags": [
+    ["p", "{cardPubkey}"],
+    ["t", "card-config-change"],
+    ...,
+  ],
+  "content": "{cardConfigChangeContent}",
+  "sig": "{signature}"
+}
+```
+
+Note:
+
+- the `.kind` field is `1112` (ie. a regular event),
+- the `"p"` tag points to the [Card module's pubkey](../nostr#federation-public-keys),
+- the `"t"` tag sub-kind is `card-config-change`.
+
+The content itself is the [Multi NIP-04](../nostr#multi-nip-04) encryption of the JSON serialization of an object of the following form:
+
+```javascript
+{
+    "trusted-merchants": [
+        { "pubkey": "{merchantPubkey}" },
+        ...,
+    ],
+    "cards": {
+        "{cardUuid}": {
+            "name": "{cardName}",
+            "description": "{cardDescription}",
+            "status": "{ENABLED / DISABLED}",
+            "limits": [
+                {
+                    "name": "{limitName}",
+                    "description": "{limitDescription}",
+                    "token": "{limitToken}",
+                    "amount": limitAmount,
+                    "delta": limitTimeDelta
+                },
+                ...,
+            ]
+        },
+    }
+}
+```
+
+Where the `.trusted-merchants` entry is optional.
+The `.cards` entry is _not_ optional, but for any specific value within it the `.name`, `.description`, `.status`, and `.limits` entries are optional.
+Finally, within those `.limits` entries that do exist, all their fields are _not_ optional.
+
+An example TypeScript `type` definition for this event's content is:
+
+```typescript
+type CardConfigChangeContent = {
+    "trusted-merchants"?: {
+        pubkey: string,
+    }[],
+    cards: {
+        [cardUuid: string]: {
+            name?: string,
+            description?: string,
+            status?: "ENABLED" | "DISABLED",
+            limits?: {
+                name: string,
+                description: string,
+                token: string,
+                amount: bigint,
+                delta: number,
+            },
+        },
+    },
+};
+```
+
+## Emitters
+
+This event is emitted by:
+
+- Individual Clients.
+
+## Targets
+
+This event is targeted towards:
+
+- The Card module.
+
+## Listeners
+
+This event is listened for by:
+
+- The Card module.
+- Any other agent listening for this event will learn nothing other than the specific client having potentially changed its cards configuration.
+
+

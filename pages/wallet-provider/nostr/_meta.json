@@ -1,0 +1,4 @@
+{
+  "card-config-change": "Card Config Change Event",
+  "card-config-change-ack": "Card Config Change Acknowledgement Event"
+}
