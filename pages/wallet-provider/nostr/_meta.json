@@ -3,5 +3,8 @@
   "card-config-change-ack": "Card Config Change Acknowledgement",
   "inbound-transaction-start": "Inbound Transaction Start",
   "inbound-transaction-error": "Inbound Transaction Error",
-  "inbound-transaction-ok": "Inbound Transaction Ok"
+  "inbound-transaction-ok": "Inbound Transaction Ok",
+  "outbound-transaction-start": "Outbound Transaction Start",
+  "outbound-transaction-error": "Outbound Transaction Error",
+  "outbound-transaction-ok": "Outbound Transaction Ok"
 }
