@@ -1,0 +1,64 @@
+# POST /card/pay
+
+This is the second part of an extended LUD-03 if on the extended scan we
+determined that the card belongs to a lawallet federation that we know
+
+
+## Examples
+### Valid body
+```json copy showLineNumbers
+{
+  "k1": string,      // the k1 value sent in the scan response
+  "npub": string,    // the recipient's NPUB
+  "tokens": {        // a list of amounts to request per token name
+    string: number,  // a token name mapped to a token amount to withdraw
+    ...
+  }
+}
+```
+
+### Javascript
+```js copy showLineNumbers
+const options = {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: '{"id":"243167e221d51886b98480acb1f9b61ad6855ebbd85830b79ee937760213719b","pubkey":"49001062a54bc52153dcc69b65927833be519104249324e462eab45d494a0c46","created_at":1698332759,"kind":21111,"tags":[["p","75a66127dea5733b9402bddf697d0b27d7a094dfad62d22d85fd7f9eb6973a6f"],["t","lawallet:withdrawRequest"]],"content":"{\n\t\"k1\": \"A-oH2Jb_RAIqgjgEPtU_Op\",\n\t\"npub\": \"npub1w38whq9ta2vuwtxeth0pp7ekmlqqxl0jeh8st90c9uld4yfjpdhqf6pwj4\",\n\t\"tokens\": {\n\t\t\"BTC\": 100000\n\t}\n}","sig":"277f099a823f68c02ecab3e9eba087db85e5a6bab535b75689ad275d80c6ace04fcae967e5a6040ec44e13c74e37be3045ce2550f6de73b1aaa34515436296ac"}'
+};
+
+fetch('https://api.lawallet.ar/card/pay', options)
+  .then(response => response.json())
+  .then(response => console.log(response))
+  .catch(err => console.error(err));
+```
+
+### Curl
+``` bash copy
+curl --request POST \
+  --url http://api.lawallet.ar/card/pay \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "id": "243167e221d51886b98480acb1f9b61ad6855ebbd85830b79ee937760213719b",
+  "pubkey": "49001062a54bc52153dcc69b65927833be519104249324e462eab45d494a0c46",
+  "created_at": 1698332759,
+  "kind": 21111,
+  "tags": [
+    [
+      "p",
+      "75a66127dea5733b9402bddf697d0b27d7a094dfad62d22d85fd7f9eb6973a6f"
+    ],
+    [
+      "t",
+      "lawallet:withdrawRequest"
+    ]
+  ],
+  "content": "{\n\t\"k1\": \"A-oH2Jb_RAIqgjgEPtU_Op\",\n\t\"npub\": \"npub1w38whq9ta2vuwtxeth0pp7ekmlqqxl0jeh8st90c9uld4yfjpdhqf6pwj4\",\n\t\"tokens\": {\n\t\t\"BTC\": 100000\n\t}\n}",
+  "sig": "277f099a823f68c02ecab3e9eba087db85e5a6bab535b75689ad275d80c6ace04fcae967e5a6040ec44e13c74e37be3045ce2550f6de73b1aaa34515436296ac"
+}'
+```
+
+### Response
+```json copy
+{
+	"status": "OK"
+}
+```

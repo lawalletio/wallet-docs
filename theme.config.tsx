@@ -39,6 +39,8 @@ const config: DocsThemeConfig = {
     ),
   },
   sidebar: {
+    autoCollapse: true,
+    defaultMenuCollapseLevel: 0,
     titleComponent({title}) {
       const re = /^(?<method>.+) (?<name>.+$)/;
       const match = re.exec(title);

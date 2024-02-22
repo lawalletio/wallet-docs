@@ -1,0 +1,37 @@
+# GET /lnurl/:pubkey/callback
+
+This endpoint generates and return an invoice that when paid, the corresponding
+amount of sats will be accredited to the npub associated with it.
+
+It accepts a path param that is a NOSTR pubkey (ANY valid NOSTR public), so
+there is no need to have previously used Lawallet to receive money on a pubkey
+that you have the privkey of.
+
+It also accepts a query param of amount expressed in millisats
+
+## Examples
+
+### Javascript
+```js copy showLineNumbers
+const options = {method: 'GET'};
+
+fetch('https://api.lawallet.ar/lnurlp/3699cf3fab1aa22dad84155639d35911013c63bbe6e26818e2584ed12cebeb6e/callback?amount=10000000', options)
+  .then(response => response.json())
+  .then(response => console.log(response))
+  .catch(err => console.error(err));
+```
+
+### Curl
+```bash copy
+curl --request GET \
+  --url 'https://api.lawallet.ar/lnurlp/3699cf3fab1aa22dad84155639d35911013c63bbe6e26818e2584ed12cebeb6e/callback?amount=10000000' \
+  --header 'User-Agent: insomnia/2023.5.8'
+```
+
+## Response 
+```json copy
+{
+	"pr": "lnbc100u1pja0ynhpp5ufq0m7muf0wmwycpq6f9hgmytunvxkxj3az5w2em3u4pap899hgshp5quun9kwaplyekhdpjt7f88aelzwch82h579h9m6r0sh8xm8lqgwqcqzzsxqzjcsp5qshqdv98jtedq7vxx3qfzpvlqggjl8unu26lfm9tzglnlrqllxkq9qyyssqan0gdzmyzsgws97n79pg3s7dc9996m6hkcmke03agf30qaedjxq8eym39u83m6k3f9dhe37qz3kpwf7f28myn5gng488h870znskkvgqgp35yp",
+	"routes": []
+}
+```

@@ -1,0 +1,61 @@
+# POST /card
+
+This endpoint is for activating a card using a previously associated token (like
+the ones usually given with cards the first time).
+
+Request body: a NOSTR event with `content` like:
+
+```json copy
+{
+  "otc": string,           // One-time-code linked to the card to associate
+  "delegation": {          // NIP-26 delegation data (see: https://github.com/nostr-protocol/nips/blob/master/26.md)
+    "conditions": string,  // a delegation condition query string
+    "token": string        // the corresponding delegation token
+  }
+}
+```
+
+Example:
+
+```bash copy
+curl --request POST \
+  --url http://localhost:3005/card/ \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "id": "8fad06887f4f0475889f93e2291d0151da1157d2b7551a38afb865d47554b2e8",
+  "pubkey": "49001062a54bc52153dcc69b65927833be519104249324e462eab45d494a0c46",
+  "created_at": 1698091892,
+  "kind": 21111,
+  "tags": [
+    [
+      "p",
+      "75a66127dea5733b9402bddf697d0b27d7a094dfad62d22d85fd7f9eb6973a6f"
+    ],
+    [
+      "t",
+      "card-activation-request"
+    ]
+  ],
+  "content": "{\"otc\":\"weirdcode\",\"delegation\":{\"conditions\":\"kind=1112&created_at<1700762400&created_at>1698080400\",\"token\":\"dbf1ef362920cf20f9b1c1861e5491061dfb386437edf09d00f53d3f987265057d0b731e7d71d7a3eeef3c870881cca5b82647a6efa8caf04f25e0ba52606aa5\"}}",
+  "sig": "285cbf75456456d7799a7450ac80b68d6ed31e833314a71609d2410016df34ef84d4c2187ae5670829909e60d0fdd73289250213e6ee90d98f7accce65317d2e"
+}'
+```
+
+
+A `201` response status will contain a body consisting of a NOSTR event of the form:
+
+```json copy
+{
+  "id": "...",
+  "pubkey": "...",
+  "created_at": 1234567890,
+  "kind": 21111,
+  "tags": [
+    ["p", "..."],
+    ["e", "..."],
+    ["t", "card-activate-response"]
+  ],
+  "content": "{\"uuid\":\"...\",\"name\":\"...\",\"description\":\"...\",\"enabled\":true,\"holderPubKey\":\"...\",\"ntag424Cid\":\"...\"}",
+  "sig": "..."
+}
+```
