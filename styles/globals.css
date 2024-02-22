@@ -1,3 +1,45 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.httpLabel {
+  background: #000;
+  border-radius: 3px;
+  color: #fff;
+  margin-right: 8px;
+  font-family: sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 63px;
+  padding: 2px 0;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(0,0,0,.1);
+}
+
+.get {
+  background: #61affe;
+}
+
+.post {
+  background: #49cc90;
+}
+
+.put {
+  background: #61affe;
+}
+
+.patch {
+  background: #50e3c2;
+}
+
+.delete {
+  background: #f93e3e;
+}
+
+.options {
+  background: #0d5aa7;
+}
+
+.nextra-sidebar-container {
+  width: 320px !important;
+}

@@ -1,0 +1,80 @@
+# API
+
+Although most communication is throught NOSTR, there are some necessary
+endpoints.
+
+## lawallet.ar federation endpoint
+
+Our own implementation of lawallet is called lawallet.ar federation, and the api
+endpoint is:
+```
+https://api.lawallet.ar/
+```
+
+## Authentication & Authorization
+
+No endpoint uses standard HTTP authentication, but the ones that need
+authentication do so by receiving a signed NOSTR event.
+
+## `OPTIONS` Method
+
+All endpoints accept an `OPTIONS` request method with the following response:
+
+```http
+HTTP/1.1 204 No Content
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+Allow: {Allowed methods}
+{additional headers may be present}
+```
+
+## Errors
+
+Upon being requested any method other than `OPTIONS` or `POST`, these endpoints respond with:
+
+```http
+HTTP/1.1 405 Method Not Allowed
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+Allow: OPTIONS, POST
+{additional headers may be present}
+```
+
+Some Endpoints expect the body to consist of a NOSTR event JSON, if the content cannot be parsed as a valid JSON object, these endpoints respond with:
+
+```http
+HTTP/1.1 415 Unsupported Media Type
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+{additional headers may be present}
+```
+
+If the request's body _can_ be parsed as a JSON object, but this object does not conform to the NOSTR protocol specification, these endpoints respond with:
+
+```http
+HTTP/1.1 422 Unprocessable Content
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+{additional headers may be present}
+```
+
+The potential offenses include (but are not limited to):
+
+- missing first-level field: all of the basic NOSTR fields are **REQUIRED** (ie. `.id`, `.pubkey`, `.created_at`, `.kind`, `.tags`, `.content`, and `.sig`),
+- malformed field values: malformed `.id`, `.pubkey`, `.created_at`, or `.sig` fields; additionally, malformed `.tags` contents:
+  - a single `"k"` tag is required,
+  - at least one `"p"` tag is required; additionally, it should not be malformed,
+  - at most one `"delegation"` tag is required; additionally:
+    - it should not be malformed,
+    - it should validate cryptographically, and
+    - the conditions query string should match the actual event, and
+  - at most one `"alt"` tag is required
+- malformed `.content` field
+
+On the other hand, upon successfully parsing and validating the request body, the synchronous NOSTR API endpoint (ie. `{base API url}/nostr/dispatch`) will apply one more validation:
+
+- there should be **EXACTLY ONE** `"p"` tag within the `.tags` field.
+
+If this validation fails, the endpoint rill respond with:
+
+```http
+HTTP/1.1 422 Unprocessable Content
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+{additional headers may be present}
+```

@@ -2,9 +2,8 @@
   "index": "Intro",
   "getting-started": "Getting started",
   "nostr": "NOSTR Event Anatomy",
-  "api-gateway": "API Gateway",
+  "api": "API Reference",
   "architecture": "Architecture",
   "flows": "Flows",
-  "ledger": "Ledger",
-  "extensions": "Extensions"
+  "ledger": "Ledger"
 }

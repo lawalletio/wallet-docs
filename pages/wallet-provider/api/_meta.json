@@ -1,0 +1,14 @@
+{
+  "index": "Intro",
+  "publish": "POST /publish",
+  "fetch": "GET /fetch",
+  "lnurlp-callback": "GET /lnurl/:pubkey/callback",
+  "card": "POST /card",
+  "card-pay-get": "GET /card/pay",
+  "card-pay-post": "POST /card/pay",
+  "card-scan": "GET /card/scan",
+  "card-reset-request": "POST /card/reset/request",
+  "card-reset-claim": "POST /card/reset/claim",
+  "card-config-request": "POST /card/config/request",
+  "card-data-request": "POST /card/data/request"
+}

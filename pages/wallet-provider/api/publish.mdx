@@ -1,0 +1,122 @@
+# POST /publish
+
+This endpoint is for publishing NOSTR events to the LaWallet relay. Te body
+should be a valid signed NOSTR event. The server will check if the body is a
+valid NOSTR event and if so it will publish it to the relay.
+
+## Examples
+
+### Valid Body
+```json showLineNumbers copy
+{
+  "id": "7b6b54ee390ccd66b1340a2f5f4230420d8655fdc42ccf74136dd808840cfa18",
+  "pubkey": "a4c10dc7da61602206cf4affe58cf721bae1593b23f76736ab1f65c8a1df9674",
+  "created_at": 1704494938,
+  "kind": 1112,
+  "tags": [
+    [
+      "p",
+      "cdc5662509a7660dfef50c634f7f3e3f3b0d57d4ca49a42152ddac641ccfaeb2"
+    ],
+    [
+      "p",
+      "e17feb5f2cf83546bcf7fd9c8237b05275be958bd521543c2285ffc6c2d654b3"
+    ],
+    [
+      "t",
+      "internal-transaction-start"
+    ],
+    [
+      "bolt11",
+      "lnbc100n1pjn6ey0pp5t7mtzhs8q8wfcwajrhfz94jxg87g70wuay4qw02ta8azx62wf0dqhp5wh3x2fmc3nwhjqfv3czss6lndyxsvyskykgdzus3t5cyjs0sf6sqcqzzsxqzjcsp5hueuk64e2ra4vm9j82zk827g8l7dss2my9wta68qj36yfg4v66ss9qyyssqz7gree6qkl57xalqlcpxf5ye9yvsnuf0wf54dle0kstrwgjm0hkpa3mvd9y6f90fe6p07c5kzgtelxwl32lxkwm2c0hjnwxvted6vzspah0cj0"
+    ]
+  ],
+  "content": "{\"tokens\":{\"BTC\":10000}}",
+  "sig": "7b0d274fd83b8def04624143e5c7205a52d368c05acbc4128c3d29cbc64f3ce424aba1f9e7ffdc2ce88ccdcdbc908462c50d8dc1b1c96fa7f93611e85f5eea71"
+}
+```
+
+### Javascript
+```js showLineNumbers copy
+const event = {
+  "id": "7b6b54ee390ccd66b1340a2f5f4230420d8655fdc42ccf74136dd808840cfa18",
+  "pubkey": "a4c10dc7da61602206cf4affe58cf721bae1593b23f76736ab1f65c8a1df9674",
+  "created_at": 1704494938,
+  "kind": 1112,
+  "tags": [
+    [
+      "p",
+      "cdc5662509a7660dfef50c634f7f3e3f3b0d57d4ca49a42152ddac641ccfaeb2"
+    ],
+    [
+      "p",
+      "e17feb5f2cf83546bcf7fd9c8237b05275be958bd521543c2285ffc6c2d654b3"
+    ],
+    [
+      "t",
+      "internal-transaction-start"
+    ],
+    [
+      "bolt11",
+      "lnbc100n1pjn6ey0pp5t7mtzhs8q8wfcwajrhfz94jxg87g70wuay4qw02ta8azx62wf0dqhp5wh3x2fmc3nwhjqfv3czss6lndyxsvyskykgdzus3t5cyjs0sf6sqcqzzsxqzjcsp5hueuk64e2ra4vm9j82zk827g8l7dss2my9wta68qj36yfg4v66ss9qyyssqz7gree6qkl57xalqlcpxf5ye9yvsnuf0wf54dle0kstrwgjm0hkpa3mvd9y6f90fe6p07c5kzgtelxwl32lxkwm2c0hjnwxvted6vzspah0cj0"
+    ]
+  ],
+  "content": "{\"tokens\":{\"BTC\":10000}}",
+  "sig": "7b0d274fd83b8def04624143e5c7205a52d368c05acbc4128c3d29cbc64f3ce424aba1f9e7ffdc2ce88ccdcdbc908462c50d8dc1b1c96fa7f93611e85f5eea71"
+};
+const options = {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json' },
+  body: event
+};
+
+fetch('https://api.lawallet.ar/nostr/publish/', options)
+  .then(response => response.json())
+  .then(response => console.log(response))
+  .catch(err => console.error(err));
+```
+
+### Curl
+```bash copy
+curl --request POST \
+  --url https://api.lawallet.ar/nostr/publish/ \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "id": "7b6b54ee390ccd66b1340a2f5f4230420d8655fdc42ccf74136dd808840cfa18",
+  "pubkey": "a4c10dc7da61602206cf4affe58cf721bae1593b23f76736ab1f65c8a1df9674",
+  "created_at": 1704494938,
+  "kind": 1112,
+  "tags": [
+    [
+      "p",
+      "cdc5662509a7660dfef50c634f7f3e3f3b0d57d4ca49a42152ddac641ccfaeb2"
+    ],
+    [
+      "p",
+      "e17feb5f2cf83546bcf7fd9c8237b05275be958bd521543c2285ffc6c2d654b3"
+    ],
+    [
+      "t",
+      "internal-transaction-start"
+    ],
+    [
+      "bolt11",
+      "lnbc100n1pjn6ey0pp5t7mtzhs8q8wfcwajrhfz94jxg87g70wuay4qw02ta8azx62wf0dqhp5wh3x2fmc3nwhjqfv3czss6lndyxsvyskykgdzus3t5cyjs0sf6sqcqzzsxqzjcsp5hueuk64e2ra4vm9j82zk827g8l7dss2my9wta68qj36yfg4v66ss9qyyssqz7gree6qkl57xalqlcpxf5ye9yvsnuf0wf54dle0kstrwgjm0hkpa3mvd9y6f90fe6p07c5kzgtelxwl32lxkwm2c0hjnwxvted6vzspah0cj0"
+    ]
+  ],
+  "content": "{\"tokens\":{\"BTC\":10000}}",
+  "sig": "7b0d274fd83b8def04624143e5c7205a52d368c05acbc4128c3d29cbc64f3ce424aba1f9e7ffdc2ce88ccdcdbc908462c50d8dc1b1c96fa7f93611e85f5eea71"
+}'
+```
+
+## Success
+
+Upon successfully parsing and validating the request body, the asynchronous NOSTR API endpoint (ie. `{base API url}/nostr/publish`) will send an `EVENT` message to the Local NOSTR Relay (via WebSockets) with the request body as data and respond with:
+
+```http
+HTTP/1.1 202 Accepted
+Date: {day name}, {day} {month} {year} {hour}:{minute}:{second} GMT
+Location: nostr:{nevent}
+Content-Length: 0
+{additional headers may be present}
+```

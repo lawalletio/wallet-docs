@@ -38,6 +38,26 @@ const config: DocsThemeConfig = {
       </div>
     ),
   },
+  sidebar: {
+    titleComponent({title}) {
+      const re = /^(?<method>.+) (?<name>.+$)/;
+      const match = re.exec(title);
+      if (match) {
+        const method = match.groups.method.toUpperCase();
+        const route = match.groups.name;
+          switch (method) {
+            case 'GET':
+            case 'PUT':
+            case 'POST':
+            case 'PATCH':
+            case 'DELETE':
+            case 'OPTIONS':
+              return <> <span className={`httpLabel ${method.toLowerCase()}`}>{method}</span>{route} </>
+          }
+      }
+      return <> {title} </>
+    }
+  },
 };
 
 export default config;
